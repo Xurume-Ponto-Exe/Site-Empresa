@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de Segurança</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
@@ -103,19 +101,15 @@
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO INICIAL ---
         const ARQUIVO_EPI = "epis_data";
         const ARQUIVO_SISTEMA = "sistemas_data";
         let modoEdicao = { ativo: false, tipo: null, index: -1 };
 
-        // --- LÓGICA DE TEMA ---
         function toggleDarkMode() {
             document.body.classList.toggle('dark-theme');
-            const tema = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
-            localStorage.setItem('theme', tema);
+            localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
         }
 
-        // --- FUNÇÕES DE UTILIDADE ---
         function showNotification(message, type = 'info') {
             const container = document.getElementById('notification-container');
             const notification = document.createElement('div');
@@ -138,7 +132,6 @@
         function salvarDados(arquivo, dados) { localStorage.setItem(arquivo, JSON.stringify(dados, null, 2)); }
         function getInput(id) { return document.getElementById(id); }
 
-        // --- LÓGICA PRINCIPAL (CRUD) ---
         function salvarEpi() {
             try {
                 const epi = {
@@ -233,10 +226,8 @@
             }
         }
 
-        // --- LÓGICA DE VISUALIZAÇÃO E BUSCA ---
         function toggleView(tipo) {
-            const containerId = tipo === 'EPIs' ? 'epis-view-container' : 'sistemas-view-container';
-            const container = getInput(containerId);
+            const container = getInput(tipo === 'EPIs' ? 'epis-view-container' : 'sistemas-view-container');
             const isVisible = container.style.display === 'block';
             container.style.display = isVisible ? 'none' : 'block';
             if (!isVisible) {
@@ -253,8 +244,7 @@
             const termoBusca = getInput(buscaId).value.toLowerCase();
             const dados = carregarDados(arquivo);
 
-            viewElement.innerHTML = ''; // Limpa a visualização
-
+            viewElement.innerHTML = '';
             const dadosFiltrados = dados.filter(item => !termoBusca || item.descricao.toLowerCase().includes(termoBusca));
 
             if (dadosFiltrados.length === 0) {
@@ -266,7 +256,6 @@
                 const index = dados.findIndex(d => d.id === item.id);
                 const itemContainer = document.createElement('div');
                 itemContainer.className = 'item-cadastrado';
-
                 let bodyContent = '';
                 for (const [chave, valor] of Object.entries(item)) {
                     if (chave === 'descricao' || chave === 'id') continue;
@@ -287,17 +276,13 @@
                 `;
 
                 itemContainer.querySelector('.btn-edit').addEventListener('click', () => editarItem(tipo, index));
-                
                 viewElement.appendChild(itemContainer);
             });
         }
 
-        // --- OUTRAS FUNÇÕES ---
         function marcarEnvioDocumentos() {
             const nomeSistema = getInput('doc-nome-sistema').value;
-            if (!nomeSistema) {
-                return showNotification("Erro: Por favor, digite o nome do sistema.", 'error');
-            }
+            if (!nomeSistema) return showNotification("Erro: Por favor, digite o nome do sistema.", 'error');
             
             const sistemas = carregarDados(ARQUIVO_SISTEMA);
             const sistemaIndex = sistemas.findIndex(s => s.descricao.toLowerCase() === nomeSistema.toLowerCase());
@@ -307,7 +292,6 @@
                 sistemas[sistemaIndex].nota_fiscal_recebida = getInput('nf-recebida').checked;
                 salvarDados(ARQUIVO_SISTEMA, sistemas);
                 showNotification("Documentos atualizados para o sistema '" + nomeSistema + "'.", 'success');
-
                 getInput('doc-nome-sistema').value = '';
                 getInput('art-recebida').checked = false;
                 getInput('nf-recebida').checked = false;
@@ -331,14 +315,11 @@
         }
 
         function showPage(pageId, element) {
-            document.querySelectorAll('.page-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.sidebar-nav a').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.page-content, .sidebar-nav a').forEach(el => el.classList.remove('active'));
             document.getElementById(pageId + '-page').classList.add('active');
             element.classList.add('active');
             resetarFormulario('EPIs');
             resetarFormulario('Sistemas');
-
-            // Fecha o menu ao selecionar uma página no modo mobile
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.overlay');
             if(sidebar.classList.contains('open')) {
@@ -347,35 +328,22 @@
             }
         }
         
-        // --- INICIALIZAÇÃO DA PÁGINA ---
         window.onload = function() {
-            // Aplica o tema salvo ao carregar a página
             if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-theme');
             }
-
-            // Conecta a função de troca de tema ao novo botão
-            const darkModeButton = document.getElementById('btn-dark-mode-toggle');
-            if (darkModeButton) {
-                darkModeButton.addEventListener('click', toggleDarkMode);
-            }
-            
-            // Lógica do menu mobile
+            document.getElementById('btn-dark-mode-toggle').addEventListener('click', toggleDarkMode);
             const menuButton = document.getElementById('menu-toggle-btn');
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.overlay');
-
             menuButton.addEventListener('click', () => {
                 sidebar.classList.toggle('open');
                 overlay.classList.toggle('active');
             });
-            
             overlay.addEventListener('click', () => {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('active');
             });
-
-            // Chama a verificação de alertas após um segundo
             setTimeout(mostrarAlertas, 1000); 
         };
     </script>
