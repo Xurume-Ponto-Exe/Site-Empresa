@@ -308,3 +308,13 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     .overlay.active { display: block; }
     .content { padding: 70px 15px 15px 15px; }
 }
+
+.theme-toggle-container {
+display: flex;
+justify-content: center; 
+transition: border-color 0.3s;
+}
+
+.theme-toggle-container .theme-icon {
+margin: 0 8px; 
+}
