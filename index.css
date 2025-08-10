@@ -56,7 +56,7 @@ body {
     padding: 15px 10px 25px 10px;
     transition: border-color 0.3s;
 }
-#sidebar-logo { height: 50px; width: auto; object-fit: contain; }
+#sidebar-logo { height: 100px; width: auto; object-fit: contain; }
 .sidebar-nav { flex-grow: 1; }
 .sidebar-nav a {
     align-items: center;
