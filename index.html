@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Segurança</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <div id="notification-container"></div>
+    <div class="overlay"></div>
+    
+    <button id="menu-toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">Gerenciador</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active" onclick="showPage('epi', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> EPIs
+                </a>
+                <a href="#" onclick="showPage('sistemas', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Sistemas
+                </a>
+                <a href="#" onclick="showPage('documentos', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Documentos
+                </a>
+                <a href="#" onclick="showPage('controles', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg> Controles
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-dark-mode-toggle"></button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <div id="epi-page" class="page-content active">
+                <div class="card">
+                    <h2 id="epi-form-title">Cadastro de EPI</h2>
+                    <div class="form-group"> <label for="descricao-epi">Descrição do EPI</label> <input type="text" id="descricao-epi"> </div>
+                    <div class="form-group"> <label for="data-entrega-epi">Data de entrega</label> <input type="date" id="data-entrega-epi"> </div>
+                    <div class="form-group"> <label for="tempo-troca">Tempo de troca (dias)</label> <input type="number" id="tempo-troca" inputmode="numeric"> </div>
+                    <div class="form-group"> <label for="data-troca">Data da troca</label> <input type="date" id="data-troca"> </div>
+                    <div class="btn-group"> <button id="btn-salvar-epi" onclick="salvarEpi()">Cadastrar EPI</button> <button class="btn-secondary" onclick="toggleView('EPIs')">Ver Cadastrados</button> </div>
+                    
+                    <div id="epis-view-container" class="view-container" style="display:none;">
+                        <div class="search-bar form-group">
+                            <label for="busca-epi">Buscar EPI</label>
+                            <input type="text" id="busca-epi" onkeyup="atualizarVisualizacao('EPIs')" placeholder="Digite a descrição para filtrar...">
+                        </div>
+                        <div id="epis-cadastrados-view" class="cadastros-view"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="sistemas-page" class="page-content">
+                 <div class="card">
+                    <h2 id="sist-form-title">Cadastro de Sistema</h2>
+                    <div class="form-group"> <label for="desc-sistema">Descrição do Sistema</label> <input type="text" id="desc-sistema"> </div>
+                    <div class="form-group"> <label for="data-entrega-sistema">Data da entrega da obra</label> <input type="date" id="data-entrega-sistema"> </div>
+                    <div class="form-group"> <label for="data-manutencao">Próxima manutenção</label> <input type="date" id="data-manutencao"> </div>
+                    <div class="btn-group"> <button id="btn-salvar-sist" onclick="salvarSistema()">Cadastrar Sistema</button> <button class="btn-secondary" onclick="toggleView('Sistemas')">Ver Cadastrados</button> </div>
+
+                    <div id="sistemas-view-container" class="view-container" style="display:none;">
+                        <div class="search-bar form-group">
+                            <label for="busca-sistemas">Buscar Sistema</label>
+                            <input type="text" id="busca-sistemas" onkeyup="atualizarVisualizacao('Sistemas')" placeholder="Digite a descrição para filtrar...">
+                        </div>
+                        <div id="sistemas-cadastrados-view" class="cadastros-view"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="documentos-page" class="page-content">
+                <div class="card">
+                    <h2>Atualizar Documentos de Sistema</h2>
+                    <div class="form-group"> <label for="doc-nome-sistema">Nome do sistema para atualizar</label> <input type="text" id="doc-nome-sistema"> </div>
+                    <div class="checkbox-group"> <input type="checkbox" id="art-recebida"> <label for="art-recebida">ART Recebida</label> </div>
+                    <div class="checkbox-group"> <input type="checkbox" id="nf-recebida"> <label for="nf-recebida">Nota Fiscal Recebida</label> </div>
+                    <div class="btn-group"> <button onclick="marcarEnvioDocumentos()">Atualizar Documentos</button> </div>
+                </div>
+            </div>
+            <div id="controles-page" class="page-content">
+                <div class="card">
+                    <h2>Controles Gerais</h2>
+                    <p>Aqui você pode gerenciar os dados do sistema e verificar alertas.</p>
+                    <div class="btn-group"> <button onclick="mostrarAlertas()">Verificar Alertas de Manutenção</button> <button class="btn-reset" onclick="resetarDados()">Resetar Todos os Dados</button> </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO INICIAL ---
+        const ARQUIVO_EPI = "epis_data";
+        const ARQUIVO_SISTEMA = "sistemas_data";
+        let modoEdicao = { ativo: false, tipo: null, index: -1 };
+
+        // --- LÓGICA DE TEMA ---
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-theme');
+            const tema = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+            localStorage.setItem('theme', tema);
+        }
+
+        // --- FUNÇÕES DE UTILIDADE ---
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            container.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+        function formatarDataParaSalvar(dataString) {
+            if (!dataString) return "";
+            const [ano, mes, dia] = dataString.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+        function formatarDataParaInput(dataString) {
+            if (!dataString) return "";
+            const [dia, mes, ano] = dataString.split('/');
+            return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+        }
+        function carregarDados(arquivo) { return JSON.parse(localStorage.getItem(arquivo)) || []; }
+        function salvarDados(arquivo, dados) { localStorage.setItem(arquivo, JSON.stringify(dados, null, 2)); }
+        function getInput(id) { return document.getElementById(id); }
+
+        // --- LÓGICA PRINCIPAL (CRUD) ---
+        function salvarEpi() {
+            try {
+                const epi = {
+                    id: modoEdicao.ativo ? carregarDados(ARQUIVO_EPI)[modoEdicao.index].id : Date.now(),
+                    descricao: getInput('descricao-epi').value,
+                    data_entrega: formatarDataParaSalvar(getInput('data-entrega-epi').value),
+                    tempo_troca_dias: parseInt(getInput('tempo-troca').value, 10),
+                    data_troca: formatarDataParaSalvar(getInput('data-troca').value)
+                };
+                if (!epi.descricao || !epi.data_entrega || isNaN(epi.tempo_troca_dias) || !epi.data_troca) throw new Error("Preencha todos os campos corretamente.");
+                
+                const epis = carregarDados(ARQUIVO_EPI);
+                const mensagem = (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') ? "EPI atualizado com sucesso!" : "EPI cadastrado com sucesso!";
+                if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
+                    epis[modoEdicao.index] = epi;
+                } else {
+                    epis.push(epi);
+                }
+                
+                salvarDados(ARQUIVO_EPI, epis);
+                showNotification(mensagem, 'success');
+                resetarFormulario('EPIs');
+                atualizarVisualizacao('EPIs');
+            } catch (e) {
+                showNotification(`Erro: ${e.message}`, 'error');
+            }
+        }
+
+        function salvarSistema() {
+             try {
+                const sistemas = carregarDados(ARQUIVO_SISTEMA);
+                const sistema = {
+                    id: modoEdicao.ativo ? sistemas[modoEdicao.index].id : Date.now(),
+                    descricao: getInput('desc-sistema').value,
+                    data_entrega_obra: formatarDataParaSalvar(getInput('data-entrega-sistema').value),
+                    data_proxima_manutencao: formatarDataParaSalvar(getInput('data-manutencao').value),
+                    art_recebida: modoEdicao.ativo ? sistemas[modoEdicao.index].art_recebida : false,
+                    nota_fiscal_recebida: modoEdicao.ativo ? sistemas[modoEdicao.index].nota_fiscal_recebida : false
+                };
+                if (!sistema.descricao || !sistema.data_entrega_obra || !sistema.data_proxima_manutencao) throw new Error("Preencha todos os campos.");
+                
+                const mensagem = (modoEdicao.ativo && modoEdicao.tipo === 'Sistemas') ? "Sistema atualizado!" : "Sistema cadastrado!";
+                if (modoEdicao.ativo && modoEdicao.tipo === 'Sistemas') {
+                    sistemas[modoEdicao.index] = sistema;
+                } else {
+                    sistemas.push(sistema);
+                }
+                
+                salvarDados(ARQUIVO_SISTEMA, sistemas);
+                showNotification(mensagem, 'success');
+                resetarFormulario('Sistemas');
+                atualizarVisualizacao('Sistemas');
+            } catch (e) {
+                showNotification(`Erro: ${e.message}`, 'error');
+            }
+        }
+
+        function editarItem(tipo, index) {
+            const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
+            const item = carregarDados(arquivo)[index];
+            if (!item) return;
+
+            modoEdicao = { ativo: true, tipo: tipo, index: index };
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (tipo === 'EPIs') {
+                getInput('descricao-epi').value = item.descricao;
+                getInput('data-entrega-epi').value = formatarDataParaInput(item.data_entrega);
+                getInput('tempo-troca').value = item.tempo_troca_dias;
+                getInput('data-troca').value = formatarDataParaInput(item.data_troca);
+                getInput('epi-form-title').textContent = "Editando EPI";
+                getInput('btn-salvar-epi').textContent = "Salvar Alterações";
+            } else {
+                getInput('desc-sistema').value = item.descricao;
+                getInput('data-entrega-sistema').value = formatarDataParaInput(item.data_entrega_obra);
+                getInput('data-manutencao').value = formatarDataParaInput(item.data_proxima_manutencao);
+                getInput('sist-form-title').textContent = "Editando Sistema";
+                getInput('btn-salvar-sist').textContent = "Salvar Alterações";
+            }
+        }
+        
+        function resetarFormulario(tipo) {
+            modoEdicao = { ativo: false, tipo: null, index: -1 };
+            if (tipo === 'EPIs') {
+                ['descricao-epi', 'data-entrega-epi', 'tempo-troca', 'data-troca'].forEach(id => getInput(id).value = '');
+                getInput('epi-form-title').textContent = "Cadastro de EPI";
+                getInput('btn-salvar-epi').textContent = "Cadastrar EPI";
+            } else {
+                ['desc-sistema', 'data-entrega-sistema', 'data-manutencao'].forEach(id => getInput(id).value = '');
+                getInput('sist-form-title').textContent = "Cadastro de Sistema";
+                getInput('btn-salvar-sist').textContent = "Cadastrar Sistema";
+            }
+        }
+
+        // --- LÓGICA DE VISUALIZAÇÃO E BUSCA ---
+        function toggleView(tipo) {
+            const containerId = tipo === 'EPIs' ? 'epis-view-container' : 'sistemas-view-container';
+            const container = getInput(containerId);
+            const isVisible = container.style.display === 'block';
+            container.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                atualizarVisualizacao(tipo);
+            }
+        }
+
+        function atualizarVisualizacao(tipo) {
+            const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
+            const viewId = tipo === 'EPIs' ? 'epis-cadastrados-view' : 'sistemas-cadastrados-view';
+            const buscaId = tipo === 'EPIs' ? 'busca-epi' : 'busca-sistemas';
+            
+            const viewElement = getInput(viewId);
+            const termoBusca = getInput(buscaId).value.toLowerCase();
+            const dados = carregarDados(arquivo);
+
+            viewElement.innerHTML = ''; // Limpa a visualização
+
+            const dadosFiltrados = dados.filter(item => !termoBusca || item.descricao.toLowerCase().includes(termoBusca));
+
+            if (dadosFiltrados.length === 0) {
+                viewElement.innerHTML = `<p style="padding: 15px; text-align: center;">Nenhum item encontrado.</p>`;
+                return;
+            }
+
+            dadosFiltrados.forEach((item) => {
+                const index = dados.findIndex(d => d.id === item.id);
+                const itemContainer = document.createElement('div');
+                itemContainer.className = 'item-cadastrado';
+
+                let bodyContent = '';
+                for (const [chave, valor] of Object.entries(item)) {
+                    if (chave === 'descricao' || chave === 'id') continue;
+                    const chaveFormatada = (chave.charAt(0).toUpperCase() + chave.slice(1)).replace(/_/g, ' ');
+                    bodyContent += `<p><strong>${chaveFormatada}:</strong> ${typeof valor === 'boolean' ? (valor ? 'Sim' : 'Não') : valor}</p>`;
+                }
+
+                itemContainer.innerHTML = `
+                    <div class="item-header">
+                        <h4>${item.descricao}</h4>
+                        <div class="item-actions">
+                            <button class="btn-edit" title="Editar">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-body">${bodyContent}</div>
+                `;
+
+                itemContainer.querySelector('.btn-edit').addEventListener('click', () => editarItem(tipo, index));
+                
+                viewElement.appendChild(itemContainer);
+            });
+        }
+
+        // --- OUTRAS FUNÇÕES ---
+        function marcarEnvioDocumentos() {
+            const nomeSistema = getInput('doc-nome-sistema').value;
+            if (!nomeSistema) {
+                return showNotification("Erro: Por favor, digite o nome do sistema.", 'error');
+            }
+            
+            const sistemas = carregarDados(ARQUIVO_SISTEMA);
+            const sistemaIndex = sistemas.findIndex(s => s.descricao.toLowerCase() === nomeSistema.toLowerCase());
+
+            if (sistemaIndex > -1) {
+                sistemas[sistemaIndex].art_recebida = getInput('art-recebida').checked;
+                sistemas[sistemaIndex].nota_fiscal_recebida = getInput('nf-recebida').checked;
+                salvarDados(ARQUIVO_SISTEMA, sistemas);
+                showNotification("Documentos atualizados para o sistema '" + nomeSistema + "'.", 'success');
+
+                getInput('doc-nome-sistema').value = '';
+                getInput('art-recebida').checked = false;
+                getInput('nf-recebida').checked = false;
+            } else {
+                showNotification("Erro: Sistema não encontrado.", 'error');
+            }
+        }
+
+        function mostrarAlertas() {
+             showNotification("Verificando alertas de manutenção...", 'info');
+        }
+
+        function resetarDados() {
+            if (confirm("TEM CERTEZA? Todos os dados de EPIs e Sistemas serão apagados permanentemente.")) {
+                localStorage.removeItem(ARQUIVO_EPI);
+                localStorage.removeItem(ARQUIVO_SISTEMA);
+                showNotification("Todos os dados foram apagados.", 'warning');
+                atualizarVisualizacao('EPIs');
+                atualizarVisualizacao('Sistemas');
+            }
+        }
+
+        function showPage(pageId, element) {
+            document.querySelectorAll('.page-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.sidebar-nav a').forEach(b => b.classList.remove('active'));
+            document.getElementById(pageId + '-page').classList.add('active');
+            element.classList.add('active');
+            resetarFormulario('EPIs');
+            resetarFormulario('Sistemas');
+
+            // Fecha o menu ao selecionar uma página no modo mobile
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            if(sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            }
+        }
+        
+        // --- INICIALIZAÇÃO DA PÁGINA ---
+        window.onload = function() {
+            // Aplica o tema salvo ao carregar a página
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-theme');
+            }
+
+            // Conecta a função de troca de tema ao novo botão
+            const darkModeButton = document.getElementById('btn-dark-mode-toggle');
+            if (darkModeButton) {
+                darkModeButton.addEventListener('click', toggleDarkMode);
+            }
+            
+            // Lógica do menu mobile
+            const menuButton = document.getElementById('menu-toggle-btn');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+            
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+
+            // Chama a verificação de alertas após um segundo
+            setTimeout(mostrarAlertas, 1000); 
+        };
+    </script>
+</body>
+</html>
