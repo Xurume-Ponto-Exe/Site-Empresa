@@ -73,16 +73,7 @@ body {
 .sidebar-nav a:hover { background-color: var(--cor-fundo); color: var(--cor-texto-principal); }
 .sidebar-nav a.active { background-color: var(--cor-destaque); color: white; }
 .sidebar-nav a svg { height: 20px; stroke-width: 2; width: 20px; }
-.sidebar-footer {
-    align-items: center;
-    border-top: 1px solid var(--cor-borda);
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 20px;
-    padding-top: 20px;
-    transition: border-color 0.3s;
-}
+
 .card {
     background-color: var(--cor-card);
     border: 1px solid var(--cor-borda);
@@ -154,14 +145,15 @@ input[type="date"]::-webkit-datetime-edit-year-field {
     content: '';
     display: none;
     height: 12px;
-    left: 6px;
+    left: 9px;
     position: absolute;
-    top: 1px;   
+    top: 5px;  
     transform: rotate(45deg);
     width: 6px;
 }
 .checkbox-group input[type="checkbox"]:checked::after { display: block; }
 .checkbox-group label { color: var(--cor-texto-principal); cursor: pointer; font-size: 16px; font-weight: 500; }
+
 button {
     background-color: var(--cor-destaque);
     border: 1px solid transparent;
@@ -180,6 +172,16 @@ button:active { transform: scale(0.98); }
 button:hover, .btn-group button:first-child:hover { box-shadow: 0 0 8px var(--cor-destaque), 0 0 15px var(--cor-destaque); }
 .btn-secondary:hover { border-color: var(--cor-destaque); color: var(--cor-destaque); box-shadow: 0 0 8px var(--cor-destaque); }
 .btn-reset:hover { box-shadow: 0 0 8px var(--cor-reset), 0 0 15px var(--cor-reset); }
+
+.theme-toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 10px;
+    margin-top: auto;
+    border-top: 1px solid var(--cor-borda);
+    transition: border-color 0.3s;
+}
 #btn-dark-mode-toggle {
     appearance: none; -webkit-appearance: none;
     background-color: var(--cor-card);
@@ -206,11 +208,12 @@ button:hover, .btn-group button:first-child:hover { box-shadow: 0 0 8px var(--co
     width: 19px;
 }
 body.dark-theme #btn-dark-mode-toggle::before { background-color: var(--cor-destaque); transform: translateX(25px); }
-.theme-icon { height: 20px; stroke-width: 2; transition: color 0.3s ease-in-out; width: 20px; }
+.theme-icon { height: 20px; stroke-width: 2; transition: color 0.3s ease-in-out; width: 20px; margin: 0 8px; }
 .icon-sun { color: var(--cor-destaque); }
 .icon-moon { color: var(--cor-texto-secundario); }
 body.dark-theme .icon-sun { color: var(--cor-texto-secundario); }
 body.dark-theme .icon-moon { color: var(--cor-destaque); }
+
 .view-container { margin-top: 25px; }
 .search-bar { margin-bottom: 15px; }
 .cadastros-view {
@@ -249,6 +252,7 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
 .item-actions svg { height: 18px; width: 18px; }
 .item-body p { font-size: 13px; margin: 5px 0; }
 .item-body p strong { color: var(--cor-texto-secundario); }
+
 #notification-container {
     display: flex;
     flex-direction: column;
@@ -301,6 +305,7 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     width: 100%;
     z-index: 1000;
 }
+
 @media (max-width: 768px) {
     .sidebar { position: fixed; left: 0; top: 0; height: 100%; transform: translateX(-100%); }
     .sidebar.open { transform: translateX(0); }
@@ -308,14 +313,3 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     .overlay.active { display: block; }
     .content { padding: 70px 15px 15px 15px; }
 }
-
-.theme-toggle-container {
-display: flex;
-justify-content: center; 
-transition: border-color 0.3s;
-}
-
-.theme-toggle-container .theme-icon {
-margin: 0 8px; 
-}
-
