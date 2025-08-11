@@ -179,6 +179,7 @@ button:hover, .btn-group button:first-child:hover { box-shadow: 0 0 8px var(--co
     align-items: center;
     padding: 15px 10px;
     margin-top: auto;
+    margin-bottom: 40px;
     border-top: 1px solid var(--cor-borda);
     transition: border-color 0.3s;
 }
