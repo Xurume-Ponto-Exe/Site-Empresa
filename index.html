@@ -9,6 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+
+    <link rel="stylesheet" href="index.css">
+
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
 
@@ -348,7 +354,281 @@
             });
             setTimeout(mostrarAlertas, 1000); 
         };
-    </script>
+    <script>
+    // --- CONFIGURAÇÃO DO FIREBASE ---
+    // Cole aqui a configuração que você copiou do Firebase no Passo 1
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_AUTH_DOMAIN",
+        projectId: "SEU_PROJECT_ID",
+        storageBucket: "SEU_STORAGE_BUCKET",
+        messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+        appId: "SUA_APP_ID"
+    };
+
+    // Inicializa o Firebase e o Firestore
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Nomes das nossas "tabelas" (coleções) no banco de dados
+    const ARQUIVO_EPI = "epis";
+    const ARQUIVO_SISTEMA = "sistemas";
+    let modoEdicao = { ativo: false, tipo: null, id: null };
+
+
+    // --- FUNÇÕES DE UTILIDADE (A maioria continua igual) ---
+    function showNotification(message, type = 'info') {
+        const container = document.getElementById('notification-container');
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        container.appendChild(notification);
+        setTimeout(() => notification.remove(), 5000);
+    }
+    function formatarDataParaSalvar(dataString) {
+        if (!dataString) return "";
+        const [ano, mes, dia] = dataString.split('-');
+        return `${dia}/${mes}/${ano}`;
+    }
+    function formatarDataParaInput(dataString) {
+        if (!dataString) return "";
+        const [dia, mes, ano] = dataString.split('/');
+        return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    }
+    function getInput(id) { return document.getElementById(id); }
+
+    // --- LÓGICA PRINCIPAL (CRUD com FIREBASE) ---
+    // As funções agora são "async" porque operações de banco de dados levam um tempo.
+
+    async function salvarEpi() {
+        try {
+            const epi = {
+                descricao: getInput('descricao-epi').value,
+                data_entrega: formatarDataParaSalvar(getInput('data-entrega-epi').value),
+                tempo_troca_dias: parseInt(getInput('tempo-troca').value, 10),
+                data_troca: formatarDataParaSalvar(getInput('data-troca').value)
+            };
+            if (!epi.descricao || !epi.data_entrega || isNaN(epi.tempo_troca_dias) || !epi.data_troca) throw new Error("Preencha todos os campos corretamente.");
+
+            if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
+                await db.collection(ARQUIVO_EPI).doc(modoEdicao.id).update(epi);
+                showNotification("EPI atualizado com sucesso!", 'success');
+            } else {
+                await db.collection(ARQUIVO_EPI).add(epi);
+                showNotification("EPI cadastrado com sucesso!", 'success');
+            }
+            
+            resetarFormulario('EPIs');
+            atualizarVisualizacao('EPIs');
+        } catch (e) {
+            showNotification(`Erro: ${e.message}`, 'error');
+        }
+    }
+
+    async function salvarSistema() {
+        try {
+            const sistema = {
+                descricao: getInput('desc-sistema').value,
+                data_entrega_obra: formatarDataParaSalvar(getInput('data-entrega-sistema').value),
+                data_proxima_manutencao: formatarDataParaSalvar(getInput('data-manutencao').value),
+                art_recebida: false, // Valor inicial
+                nota_fiscal_recebida: false // Valor inicial
+            };
+            if (!sistema.descricao || !sistema.data_entrega_obra || !sistema.data_proxima_manutencao) throw new Error("Preencha todos os campos.");
+
+            if (modoEdicao.ativo && modoEdicao.tipo === 'Sistemas') {
+                // Ao editar, preservamos o status dos documentos
+                const docRef = db.collection(ARQUIVO_SISTEMA).doc(modoEdicao.id);
+                const docSnap = await docRef.get();
+                if (docSnap.exists) {
+                    sistema.art_recebida = docSnap.data().art_recebida;
+                    sistema.nota_fiscal_recebida = docSnap.data().nota_fiscal_recebida;
+                }
+                await docRef.update(sistema);
+                showNotification("Sistema atualizado!", 'success');
+            } else {
+                await db.collection(ARQUIVO_SISTEMA).add(sistema);
+                showNotification("Sistema cadastrado!", 'success');
+            }
+
+            resetarFormulario('Sistemas');
+            atualizarVisualizacao('Sistemas');
+        } catch (e) {
+            showNotification(`Erro: ${e.message}`, 'error');
+        }
+    }
+
+    async function editarItem(tipo, id) {
+        const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
+        const doc = await db.collection(arquivo).doc(id).get();
+        if (!doc.exists) return;
+        const item = doc.data();
+
+        modoEdicao = { ativo: true, tipo: tipo, id: id };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (tipo === 'EPIs') {
+            getInput('descricao-epi').value = item.descricao;
+            getInput('data-entrega-epi').value = formatarDataParaInput(item.data_entrega);
+            getInput('tempo-troca').value = item.tempo_troca_dias;
+            getInput('data-troca').value = formatarDataParaInput(item.data_troca);
+            getInput('epi-form-title').textContent = "Editando EPI";
+            getInput('btn-salvar-epi').textContent = "Salvar Alterações";
+        } else {
+            getInput('desc-sistema').value = item.descricao;
+            getInput('data-entrega-sistema').value = formatarDataParaInput(item.data_entrega_obra);
+            getInput('data-manutencao').value = formatarDataParaInput(item.data_proxima_manutencao);
+            getInput('sist-form-title').textContent = "Editando Sistema";
+            getInput('btn-salvar-sist').textContent = "Salvar Alterações";
+        }
+    }
+
+    function resetarFormulario(tipo) {
+        modoEdicao = { ativo: false, tipo: null, id: null };
+        if (tipo === 'EPIs') {
+            ['descricao-epi', 'data-entrega-epi', 'tempo-troca', 'data-troca'].forEach(id => getInput(id).value = '');
+            getInput('epi-form-title').textContent = "Cadastro de EPI";
+            getInput('btn-salvar-epi').textContent = "Cadastrar EPI";
+        } else {
+            ['desc-sistema', 'data-entrega-sistema', 'data-manutencao'].forEach(id => getInput(id).value = '');
+            getInput('sist-form-title').textContent = "Cadastro de Sistema";
+            getInput('btn-salvar-sist').textContent = "Cadastrar Sistema";
+        }
+    }
+
+    function toggleView(tipo) {
+        const container = getInput(tipo === 'EPIs' ? 'epis-view-container' : 'sistemas-view-container');
+        const isVisible = container.style.display === 'block';
+        container.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+            atualizarVisualizacao(tipo);
+        }
+    }
+
+    async function atualizarVisualizacao(tipo) {
+        const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
+        const viewId = tipo === 'EPIs' ? 'epis-cadastrados-view' : 'sistemas-cadastrados-view';
+        const buscaId = tipo === 'EPIs' ? 'busca-epi' : 'busca-sistemas';
+
+        const viewElement = getInput(viewId);
+        const termoBusca = getInput(buscaId).value.toLowerCase();
+        viewElement.innerHTML = '';
+
+        const snapshot = await db.collection(arquivo).get();
+        const dados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        const dadosFiltrados = dados.filter(item => !termoBusca || item.descricao.toLowerCase().includes(termoBusca));
+
+        if (dadosFiltrados.length === 0) {
+            viewElement.innerHTML = `<p style="padding: 15px; text-align: center;">Nenhum item encontrado.</p>`;
+            return;
+        }
+
+        dadosFiltrados.forEach((item) => {
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'item-cadastrado';
+            let bodyContent = '';
+            for (const [chave, valor] of Object.entries(item)) {
+                if (chave === 'descricao' || chave === 'id') continue;
+                const chaveFormatada = (chave.charAt(0).toUpperCase() + chave.slice(1)).replace(/_/g, ' ');
+                bodyContent += `<p><strong>${chaveFormatada}:</strong> ${typeof valor === 'boolean' ? (valor ? 'Sim' : 'Não') : valor}</p>`;
+            }
+
+            itemContainer.innerHTML = `
+                <div class="item-header">
+                    <h4>${item.descricao}</h4>
+                    <div class="item-actions">
+                        <button class="btn-edit" title="Editar">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="item-body">${bodyContent}</div>
+            `;
+
+            itemContainer.querySelector('.btn-edit').addEventListener('click', () => editarItem(tipo, item.id));
+            viewElement.appendChild(itemContainer);
+        });
+    }
+
+    async function marcarEnvioDocumentos() {
+        const nomeSistema = getInput('doc-nome-sistema').value;
+        if (!nomeSistema) return showNotification("Erro: Por favor, digite o nome do sistema.", 'error');
+
+        const snapshot = await db.collection(ARQUIVO_SISTEMA).where("descricao", "==", nomeSistema).get();
+        
+        if (!snapshot.empty) {
+            const docId = snapshot.docs[0].id;
+            await db.collection(ARQUIVO_SISTEMA).doc(docId).update({
+                art_recebida: getInput('art-recebida').checked,
+                nota_fiscal_recebida: getInput('nf-recebida').checked
+            });
+            showNotification("Documentos atualizados para o sistema '" + nomeSistema + "'.", 'success');
+            getInput('doc-nome-sistema').value = '';
+            getInput('art-recebida').checked = false;
+            getInput('nf-recebida').checked = false;
+        } else {
+            showNotification("Erro: Sistema não encontrado.", 'error');
+        }
+    }
+
+    // --- Funções de interface e inicialização (a maioria igual) ---
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-theme');
+        localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+    }
+    
+    function showPage(pageId, element) {
+        document.querySelectorAll('.page-content, .sidebar-nav a').forEach(el => el.classList.remove('active'));
+        document.getElementById(pageId + '-page').classList.add('active');
+        element.classList.add('active');
+        resetarFormulario('EPIs');
+        resetarFormulario('Sistemas');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        if (sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        }
+    }
+
+    function mostrarAlertas() {
+        showNotification("Verificando alertas de manutenção...", 'info');
+    }
+
+    async function resetarDados() {
+        if (confirm("TEM CERTEZA? Todos os dados de EPIs e Sistemas serão apagados permanentemente do banco de dados.")) {
+            const epiSnapshot = await db.collection(ARQUIVO_EPI).get();
+            epiSnapshot.docs.forEach(doc => doc.ref.delete());
+
+            const sistemaSnapshot = await db.collection(ARQUIVO_SISTEMA).get();
+            sistemaSnapshot.docs.forEach(doc => doc.ref.delete());
+
+            showNotification("Todos os dados foram apagados.", 'warning');
+            atualizarVisualizacao('EPIs');
+            atualizarVisualizacao('Sistemas');
+        }
+    }
+
+    window.onload = function() {
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+        }
+        document.getElementById('btn-dark-mode-toggle').addEventListener('click', toggleDarkMode);
+        const menuButton = document.getElementById('menu-toggle-btn');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+        });
+        setTimeout(mostrarAlertas, 1000);
+    };
+</script>
 
 </body>
 </html>
