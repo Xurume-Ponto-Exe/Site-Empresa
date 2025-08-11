@@ -56,7 +56,11 @@ body {
     padding: 15px 10px 25px 10px;
     transition: border-color 0.3s;
 }
-#sidebar-logo { height: 100px; width: auto; object-fit: contain; }
+.logo-light, .logo-dark {
+    height: 100px;
+    width: auto;
+    object-fit: contain;
+}
 .sidebar-nav { flex-grow: 1; }
 .sidebar-nav a {
     align-items: center;
@@ -248,11 +252,18 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     cursor: pointer;
     margin: 0 0 0 8px;
     padding: 5px;
+    transition: color 0.2s, box-shadow 0.3s;
 }
 .item-actions button:hover { color: var(--cor-destaque); }
 .item-actions svg { height: 18px; width: 18px; }
 .item-body p { font-size: 13px; margin: 5px 0; }
 .item-body p strong { color: var(--cor-texto-secundario); }
+
+/* Estilos do botão de excluir (NOVO) */
+.item-actions .btn-delete:hover {
+    color: var(--cor-reset);
+    box-shadow: 0 0 8px var(--cor-reset);
+}
 
 #notification-container {
     display: flex;
@@ -313,4 +324,18 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     #menu-toggle-btn { display: flex; }
     .overlay.active { display: block; }
     .content { padding: 70px 15px 15px 15px; }
+}
+
+.logo-dark {
+    display: none;
+}
+.logo-light {
+    display: block;
+}
+
+body.dark-theme .logo-light {
+    display: none;
+}
+body.dark-theme .logo-dark {
+    display: block;
 }

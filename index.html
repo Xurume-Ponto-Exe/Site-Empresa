@@ -25,7 +25,8 @@
     <div class="app-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="assets/mono-brancaMarca-Belfort-Engenharia (1).png" alt="Logo Belfort Engenharia" id="sidebar-logo">
+                <img src="assets/mono-pbMarca-Belfort-Engenharia.png" alt="Logo Belfort Engenharia" class="logo-light">
+                <img src="assets/mono-brancaMarca-Belfort-Engenharia (1).png" alt="Logo Belfort Engenharia" class="logo-dark">
             </div>
             <nav class="sidebar-nav">
                 <a href="#" class="active" onclick="showPage('epi', this)">
@@ -104,7 +105,6 @@
     </div>
 
 <script>
-    // --- CONFIGURAÇÃO DO FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyDLTv8Qw1IFjDnwTi6WQk-FfQuwkI9qdA8",
         authDomain: "gerenciador-belfort.firebaseapp.com",
@@ -114,7 +114,6 @@
         appId: "1:173943781751:web:175ec3ee1505ca5049c972"
     };
 
-    // Inicializa o Firebase e o Firestore
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
@@ -122,7 +121,6 @@
     const ARQUIVO_SISTEMA = "sistemas";
     let modoEdicao = { ativo: false, tipo: null, id: null };
 
-    // --- FUNÇÕES DE UTILIDADE ---
     function showNotification(message, type = 'info') {
         const container = document.getElementById('notification-container');
         const notification = document.createElement('div');
@@ -131,19 +129,50 @@
         container.appendChild(notification);
         setTimeout(() => notification.remove(), 5000);
     }
+
     function formatarDataParaSalvar(dataString) {
         if (!dataString) return "";
         const [ano, mes, dia] = dataString.split('-');
         return `${dia}/${mes}/${ano}`;
     }
+
     function formatarDataParaInput(dataString) {
         if (!dataString) return "";
         const [dia, mes, ano] = dataString.split('/');
         return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
     }
+
     function getInput(id) { return document.getElementById(id); }
 
-    // --- LÓGICA PRINCIPAL (CRUD com FIREBASE) ---
+    async function enviarConfirmacaoPorEmail(action, details) {
+        try {
+            await fetch('/.netlify/functions/send-confirmation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, details }),
+            });
+        } catch (error) {
+            console.error('Erro ao enviar email de confirmação:', error);
+        }
+    }
+
+    async function excluirItem(tipo, id, descricao) {
+        const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
+        const nomeItem = tipo === 'EPIs' ? 'EPI' : 'Sistema';
+        
+        if (confirm(`Tem certeza que deseja excluir este ${nomeItem}: "${descricao}"?`)) {
+            try {
+                await db.collection(arquivo).doc(id).delete();
+                showNotification(`${nomeItem} excluído com sucesso!`, 'success');
+                enviarConfirmacaoPorEmail(`${nomeItem} Excluído`, `Descrição: ${descricao}`);
+                atualizarVisualizacao(tipo);
+            } catch (error) {
+                showNotification(`Erro ao excluir o ${nomeItem}.`, 'error');
+                console.error("Erro ao excluir: ", error);
+            }
+        }
+    }
+
     async function salvarEpi() {
         try {
             const epi = {
@@ -157,9 +186,11 @@
             if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
                 await db.collection(ARQUIVO_EPI).doc(modoEdicao.id).update(epi);
                 showNotification("EPI atualizado com sucesso!", 'success');
+                enviarConfirmacaoPorEmail('EPI Atualizado', `Descrição: ${epi.descricao}`);
             } else {
                 await db.collection(ARQUIVO_EPI).add(epi);
                 showNotification("EPI cadastrado com sucesso!", 'success');
+                enviarConfirmacaoPorEmail('Novo EPI Cadastrado', `Descrição: ${epi.descricao}`);
             }
             
             resetarFormulario('EPIs');
@@ -189,9 +220,11 @@
                 }
                 await docRef.update(sistema);
                 showNotification("Sistema atualizado!", 'success');
+                enviarConfirmacaoPorEmail('Sistema Atualizado', `Descrição: ${sistema.descricao}`);
             } else {
                 await db.collection(ARQUIVO_SISTEMA).add(sistema);
                 showNotification("Sistema cadastrado!", 'success');
+                enviarConfirmacaoPorEmail('Novo Sistema Cadastrado', `Descrição: ${sistema.descricao}`);
             }
 
             resetarFormulario('Sistemas');
@@ -286,12 +319,16 @@
                             <button class="btn-edit" title="Editar">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                             </button>
+                            <button class="btn-delete" title="Excluir">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
                         </div>
                     </div>
                     <div class="item-body">${bodyContent}</div>
                 `;
 
                 itemContainer.querySelector('.btn-edit').addEventListener('click', () => editarItem(tipo, item.id));
+                itemContainer.querySelector('.btn-delete').addEventListener('click', () => excluirItem(tipo, item.id, item.descricao));
                 viewElement.appendChild(itemContainer);
             });
         } catch (error) {
@@ -313,6 +350,8 @@
                 nota_fiscal_recebida: getInput('nf-recebida').checked
             });
             showNotification("Documentos atualizados para o sistema '" + nomeSistema + "'.", 'success');
+            const detalhes = `ART Recebida: ${getInput('art-recebida').checked ? 'Sim' : 'Não'}\nNF Recebida: ${getInput('nf-recebida').checked ? 'Sim' : 'Não'}`;
+            enviarConfirmacaoPorEmail(`Documentos do Sistema '${nomeSistema}' Atualizados`, detalhes);
             getInput('doc-nome-sistema').value = '';
             getInput('art-recebida').checked = false;
             getInput('nf-recebida').checked = false;
@@ -356,6 +395,7 @@
                 await Promise.all([...epiDeletes, ...sistemaDeletes]);
 
                 showNotification("Todos os dados foram apagados.", 'warning');
+                enviarConfirmacaoPorEmail('Todos os Dados Resetados', 'Ação de exclusão em massa foi concluída.');
                 atualizarVisualizacao('EPIs');
                 atualizarVisualizacao('Sistemas');
             } catch (error) {
