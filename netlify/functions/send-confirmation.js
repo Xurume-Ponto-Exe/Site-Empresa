@@ -17,7 +17,7 @@ export async function handler(event) {
         
         await resend.emails.send({
             from: 'Belfort Engenharia <testedenotificações.com>',
-            to: ['joaopedropc32@gmail.com'], // MUDE PARA O EMAIL QUE RECEBERÁ AS NOTIFICAÇÕES
+            to: ['eziosanches37@gmail.com'], // MUDE PARA O EMAIL QUE RECEBERÁ AS NOTIFICAÇÕES
             subject: `Confirmação de Ação: ${action}`,
             html: `
                 <h1>Confirmação de Ação no Sistema</h1>
