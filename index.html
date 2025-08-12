@@ -437,26 +437,24 @@
         btn.textContent = 'Atualizando...';
 
         try {
-            // Passo 1: Excluir arquivos
             if (filesToDelete.length > 0) {
                 const deletePromises = filesToDelete.map(file => {
                     const fileRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
-                    return deleteObject(fileRef).catch(err => console.error("Erro ao deletar:", err)); // Não trava se um arquivo já foi removido
+                    return deleteObject(fileRef).catch(err => console.warn("Arquivo para deletar não encontrado no storage:", err.message));
                 });
                 await Promise.all(deletePromises);
             }
 
-            // Passo 2: Upload de novos arquivos
             const uploadPromises = newFiles.map(async (file) => {
                 const storageRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
                 await uploadBytes(storageRef, file);
-                return getDownloadURL(storageRef).then(url => ({ name: file.name, url }));
+                const url = await getDownloadURL(storageRef);
+                return { name: file.name, url };
             });
             const novosAnexos = await Promise.all(uploadPromises);
             
             const todosAnexos = [...existingFiles, ...novosAnexos];
 
-            // Passo 3: Atualizar Firestore
             const obraRef = doc(db, ARQUIVO_OBRA, obraSelecionadaId);
             await updateDoc(obraRef, {
                 doc_art_rrt: getInput('art-rrt-recebida').checked,
