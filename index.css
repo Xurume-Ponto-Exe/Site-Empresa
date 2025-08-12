@@ -183,7 +183,7 @@ button:hover, .btn-group button:first-child:hover { box-shadow: 0 0 8px var(--co
     align-items: center;
     padding: 15px 10px;
     margin-top: auto;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
     border-top: 1px solid var(--cor-borda);
     transition: border-color 0.3s;
 }
@@ -255,15 +255,17 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     transition: color 0.2s, box-shadow 0.3s;
 }
 .item-actions button:hover { color: var(--cor-destaque); }
-.item-actions svg { height: 18px; width: 18px; }
-.item-body p { font-size: 13px; margin: 5px 0; }
-.item-body p strong { color: var(--cor-texto-secundario); }
-
-/* Estilos do botão de excluir (NOVO) */
 .item-actions .btn-delete:hover {
     color: var(--cor-reset);
     box-shadow: 0 0 8px var(--cor-reset);
 }
+.item-actions .btn-notify:hover {
+    color: var(--cor-aviso);
+    box-shadow: 0 0 8px var(--cor-aviso);
+}
+.item-actions svg { height: 18px; width: 18px; }
+.item-body p { font-size: 13px; margin: 5px 0; }
+.item-body p strong { color: var(--cor-texto-secundario); }
 
 #notification-container {
     display: flex;
@@ -326,16 +328,137 @@ body.dark-theme .icon-moon { color: var(--cor-destaque); }
     .content { padding: 70px 15px 15px 15px; }
 }
 
-.logo-dark {
-    display: none;
+.logo-dark { display: none; }
+.logo-light { display: block; }
+body.dark-theme .logo-light { display: none; }
+body.dark-theme .logo-dark { display: block; }
+
+.notifications-header {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 30px;
 }
-.logo-light {
-    display: block;
+.notifications-columns {
+    display: flex;
+    gap: 30px;
+}
+.notification-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.column-title {
+    font-size: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--cor-borda);
+    margin: 0 0 15px 0;
+}
+.item-list {
+    background-color: var(--cor-input-fundo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 300px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.notification-item {
+    background-color: var(--cor-card);
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--cor-aviso);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.notification-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--cor-shadow);
+}
+.notification-item.vencido {
+    border-left-color: var(--cor-reset);
+}
+.notification-item p {
+    margin: 4px 0;
+}
+.notification-item p:last-child {
+    font-size: 12px;
+    color: var(--cor-texto-secundario);
 }
 
-body.dark-theme .logo-light {
+/* --- ESTILOS DO MODAL DE NOTIFICAÇÃO --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
     display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
-body.dark-theme .logo-dark {
-    display: block;
+.modal-overlay.open {
+    display: flex;
+    opacity: 1;
+}
+.modal {
+    background-color: var(--cor-card);
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.open .modal {
+    transform: scale(1);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+.modal-header .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: var(--cor-texto-secundario);
+    padding: 0;
+}
+.modal-body p {
+    margin: 0 0 10px 0;
+    line-height: 1.5;
+}
+.modal-body strong {
+    color: var(--cor-texto-principal);
+}
+.modal-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 15px;
+}
+.modal-actions button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+}
+.modal-actions button svg {
+    width: 18px;
+    height: 18px;
 }
