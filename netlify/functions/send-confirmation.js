@@ -12,8 +12,8 @@ export async function handler(event) {
 
         await resend.emails.send({
             from: 'Belfort Gerenciador <onboarding@resend.dev>',
-            to: ['periniocorte@gmail.com'], // **TROQUE PELO SEU EMAIL**
-            subject: action, // O assunto agora é dinâmico
+            to: ['periniocorte@gmail.com'],
+            subject: action,
             html: `
                 <div style="font-family: sans-serif; padding: 20px; color: #333;">
                     <h1 style="color: #0056b3;">${action}</h1>
