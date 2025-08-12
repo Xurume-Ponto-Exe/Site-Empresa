@@ -9,10 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
-    
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 
@@ -156,19 +152,29 @@
         </div>
     </div>
 
-<script>
+<script type="module">
+    // Importe as funções que você precisa dos SDKs que você precisa
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+
+    // A configuração do Firebase do seu aplicativo da web
     const firebaseConfig = {
-      apiKey: "AIzaSyAqSq3BqXDr7t4vGRFLm96YJKt5mlvVIwU",
-      authDomain: "belfort-gerenciador.firebaseapp.com",
-      projectId: "belfort-gerenciador",
-      storageBucket: "belfort-gerenciador.appspot.com",
-      messagingSenderId: "570427844767",
-      appId: "1:570427844767:web:ce2b81fd6ebc84e04d5aaa"
+        apiKey: "AIzaSyDLTv8Qw1IFjDnwTi6WQk-FfQuwkI9qdA8",
+        authDomain: "gerenciador-belfort.firebaseapp.com",
+        projectId: "gerenciador-belfort",
+        storageBucket: "gerenciador-belfort.appspot.com",
+        messagingSenderId: "173943781751",
+        appId: "1:173943781751:web:175ec3ee1505ca5049c972",
+        measurementId: "G-YJZX6TC3BE"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+    // Inicialize o Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+    const analytics = getAnalytics(app);
 
     const ARQUIVO_EPI = "epis";
     const ARQUIVO_OBRA = "obras";
@@ -221,7 +227,7 @@
         
         if (confirm(`Tem certeza que deseja excluir ${nomeItem}: "${descricao}"?`)) {
             try {
-                await db.collection(collectionName).doc(id).delete();
+                await deleteDoc(doc(db, collectionName, id));
                 showNotification(`${nomeItem} excluído com sucesso!`, 'success');
                 atualizarVisualizacao(tipo);
             } catch (error) {
@@ -240,12 +246,12 @@
             };
             if (!epi.descricao || !epi.data_entrega || isNaN(epi.tempo_troca_dias) || !epi.data_troca) throw new Error("Preencha todos os campos do EPI.");
 
-            const collectionRef = db.collection(ARQUIVO_EPI);
+            const collectionRef = collection(db, ARQUIVO_EPI);
             if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
-                await collectionRef.doc(modoEdicao.id).update(epi);
+                await updateDoc(doc(db, ARQUIVO_EPI, modoEdicao.id), epi);
                 showNotification("EPI atualizado com sucesso!", 'success');
             } else {
-                await collectionRef.add(epi);
+                await addDoc(collectionRef, epi);
                 showNotification("EPI cadastrado com sucesso!", 'success');
             }
             resetarFormulario('EPIs');
@@ -264,16 +270,16 @@
             };
             if (!obraData.descricao || !obraData.data_entrega_obra || !obraData.data_proxima_manutencao) throw new Error("Preencha todos os campos da Obra.");
 
-            const collectionRef = db.collection(ARQUIVO_OBRA);
+            const collectionRef = collection(db, ARQUIVO_OBRA);
             if (modoEdicao.ativo && modoEdicao.tipo === 'Obras') {
-                const docRef = collectionRef.doc(modoEdicao.id);
-                await docRef.update(obraData);
+                const docRef = doc(db, ARQUIVO_OBRA, modoEdicao.id);
+                await updateDoc(docRef, obraData);
                 showNotification("Obra atualizada!", 'success');
             } else {
                 Object.assign(obraData, {
                     doc_art_rrt: false, doc_alvara: false, doc_avcb: false, doc_habitese: false, doc_nf: false, anexos: []
                 });
-                await collectionRef.add(obraData);
+                await addDoc(collectionRef, obraData);
                 showNotification("Obra cadastrada!", 'success');
             }
             resetarFormulario('Obras');
@@ -287,10 +293,12 @@
         const pageId = tipo === 'EPIs' ? 'epi' : 'obras';
         const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
         
-        const doc = await db.collection(collectionName).doc(id).get();
-        if (!doc.exists) return;
+        const docRef = doc(db, collectionName, id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) return;
         
-        const item = doc.data();
+        const item = docSnap.data();
         modoEdicao = { ativo: true, tipo, id };
         
         showPage(pageId);
@@ -350,7 +358,8 @@
         viewElement.innerHTML = '<p style="text-align: center;">Carregando...</p>';
 
         try {
-            const snapshot = await db.collection(collectionName).orderBy("descricao").get();
+            const q = query(collection(db, collectionName), orderBy("descricao"));
+            const snapshot = await getDocs(q);
             const dados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const dadosFiltrados = dados.filter(item => !termoBusca || item.descricao.toLowerCase().includes(termoBusca));
             viewElement.innerHTML = '';
@@ -406,7 +415,8 @@
     async function popularListaObras() {
         const datalist = document.getElementById('lista-obras');
         datalist.innerHTML = '';
-        const snapshot = await db.collection(ARQUIVO_OBRA).orderBy("descricao").get();
+        const q = query(collection(db, ARQUIVO_OBRA), orderBy("descricao"));
+        const snapshot = await getDocs(q);
         snapshot.docs.forEach(doc => {
             datalist.appendChild(new Option(doc.data().descricao));
         });
@@ -445,7 +455,8 @@
         obraList.innerHTML = '<p>Carregando...</p>';
 
         try {
-            const epiSnapshot = await db.collection(ARQUIVO_EPI).orderBy("descricao").get();
+            const epiQuery = query(collection(db, ARQUIVO_EPI), orderBy("descricao"));
+            const epiSnapshot = await getDocs(epiQuery);
             const epis = epiSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             epiList.innerHTML = '';
             if (epis.length > 0) {
@@ -460,7 +471,8 @@
                 epiList.innerHTML = '<p>Nenhum EPI cadastrado.</p>';
             }
 
-            const obraSnapshot = await db.collection(ARQUIVO_OBRA).orderBy("descricao").get();
+            const obraQuery = query(collection(db, ARQUIVO_OBRA), orderBy("descricao"));
+            const obraSnapshot = await getDocs(obraQuery);
             const obras = obraSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             obraList.innerHTML = '';
             if (obras.length > 0) {
@@ -482,10 +494,11 @@
 
     async function abrirModalNotificacao(tipo, id) {
         const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
-        const doc = await db.collection(collectionName).doc(id).get();
-        if (!doc.exists) return showNotification("Item não encontrado.", "error");
+        const docRef = doc(db, collectionName, id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists) return showNotification("Item não encontrado.", "error");
         
-        itemNotificacaoAtual = doc.data();
+        itemNotificacaoAtual = docSnap.data();
         const descricao = itemNotificacaoAtual.descricao;
         const dataVencimento = tipo === 'EPIs' ? itemNotificacaoAtual.data_troca : itemNotificacaoAtual.data_proxima_manutencao;
 
@@ -575,6 +588,19 @@
             fileList.appendChild(fileItem);
         });
     }
+
+    // Attach functions to the window object to make them accessible from onclick attributes
+    window.salvarEpi = salvarEpi;
+    window.toggleView = toggleView;
+    window.atualizarVisualizacao = atualizarVisualizacao;
+    window.salvarObra = salvarObra;
+    window.marcarEnvioDocumentos = marcarEnvioDocumentos;
+    window.carregarDetalhesDaObra = carregarDetalhesDaObra;
+    window.showPage = showPage;
+    window.fecharModalNotificacao = fecharModalNotificacao;
+    window.abrirModalNotificacao = abrirModalNotificacao;
+    window.editarItem = editarItem;
+    window.excluirItem = excluirItem;
 
     window.onload = () => {
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
