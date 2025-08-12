@@ -34,7 +34,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> EPIs
                 </a>
                 <a href="#" onclick="showPage('obras')">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg> Obras
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Obras
                 </a>
                 <a href="#" onclick="showPage('documentos')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Documentos
@@ -105,7 +105,8 @@
                             <input type="file" id="file-input" multiple hidden accept=".png,.jpeg,.jpg,.pdf,.docx">
                             <div class="drop-zone-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                <p>Arraste e solte ou clique para selecionar</p>
+                                <p>Arraste e solte os arquivos aqui</p>
+                                <button type="button" class="btn-upload">Selecionar Arquivos</button>
                                 <span>PNG, JPG, PDF, DOCX</span>
                             </div>
                         </div>
@@ -399,7 +400,20 @@
     }
 
     async function marcarEnvioDocumentos() {
-        // (Lógica de upload e atualização de documentos aqui)
+        // ... Lógica de upload aqui
+    }
+
+    async function popularListaObras() {
+        const datalist = document.getElementById('lista-obras');
+        datalist.innerHTML = '';
+        const snapshot = await db.collection(ARQUIVO_OBRA).orderBy("descricao").get();
+        snapshot.docs.forEach(doc => {
+            datalist.appendChild(new Option(doc.data().descricao));
+        });
+    }
+
+    async function carregarDetalhesDaObra() {
+        // ... Lógica para carregar detalhes aqui
     }
 
     function toggleDarkMode() {
@@ -505,6 +519,63 @@
         window.open(url, '_blank');
     }
     
+    function setupFileUpload() {
+        const dropZone = getInput('drop-zone');
+        const fileInput = getInput('file-input');
+        const uploadButton = dropZone.querySelector('.btn-upload');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        uploadButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+        
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+    }
+
+    function handleFiles(files) {
+        [...files].forEach(file => {
+            const allFileNames = [...existingFiles.map(f => f.name), ...newFiles.map(f => f.name)];
+            if (allFileNames.includes(file.name)) {
+                showNotification(`Arquivo '${file.name}' já está na lista.`, 'warning');
+            } else {
+                newFiles.push(file);
+            }
+        });
+        renderFileList();
+        getInput('file-input').value = '';
+    }
+
+    function renderFileList() {
+        const fileList = getInput('file-list');
+        fileList.innerHTML = '';
+        
+        const allFiles = [...existingFiles, ...newFiles.map(f => ({ name: f.name, isNew: true }))];
+        const uniqueFiles = Array.from(new Map(allFiles.map(item => [item.name, item])).values());
+
+        uniqueFiles.forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `<span>${file.name}</span><button title="Remover">&times;</button>`;
+            
+            fileItem.querySelector('button').addEventListener('click', (e) => {
+                e.stopPropagation();
+                existingFiles = existingFiles.filter(f => f.name !== file.name);
+                newFiles = newFiles.filter(f => f.name !== file.name);
+                renderFileList();
+            });
+            fileList.appendChild(fileItem);
+        });
+    }
+
     window.onload = () => {
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
         getInput('btn-dark-mode-toggle').addEventListener('click', toggleDarkMode);
@@ -526,6 +597,7 @@
             if (event.target === event.currentTarget) fecharModalNotificacao();
         });
         
+        setupFileUpload();
         showPage('epi');
     };
 </script>
