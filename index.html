@@ -144,18 +144,6 @@
 
     function getInput(id) { return document.getElementById(id); }
 
-    async function enviarConfirmacaoPorEmail(action, details) {
-        try {
-            await fetch('/.netlify/functions/send-confirmation', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action, details }),
-            });
-        } catch (error) {
-            console.error('Erro ao enviar email de confirmação:', error);
-        }
-    }
-
     async function excluirItem(tipo, id, descricao) {
         const arquivo = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_SISTEMA;
         const nomeItem = tipo === 'EPIs' ? 'EPI' : 'Sistema';
@@ -164,7 +152,6 @@
             try {
                 await db.collection(arquivo).doc(id).delete();
                 showNotification(`${nomeItem} excluído com sucesso!`, 'success');
-                enviarConfirmacaoPorEmail(`${nomeItem} Excluído`, `Descrição: ${descricao}`);
                 atualizarVisualizacao(tipo);
             } catch (error) {
                 showNotification(`Erro ao excluir o ${nomeItem}.`, 'error');
@@ -186,11 +173,9 @@
             if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
                 await db.collection(ARQUIVO_EPI).doc(modoEdicao.id).update(epi);
                 showNotification("EPI atualizado com sucesso!", 'success');
-                enviarConfirmacaoPorEmail('EPI Atualizado', `Descrição: ${epi.descricao}`);
             } else {
                 await db.collection(ARQUIVO_EPI).add(epi);
                 showNotification("EPI cadastrado com sucesso!", 'success');
-                enviarConfirmacaoPorEmail('Novo EPI Cadastrado', `Descrição: ${epi.descricao}`);
             }
             
             resetarFormulario('EPIs');
@@ -220,11 +205,9 @@
                 }
                 await docRef.update(sistema);
                 showNotification("Sistema atualizado!", 'success');
-                enviarConfirmacaoPorEmail('Sistema Atualizado', `Descrição: ${sistema.descricao}`);
             } else {
                 await db.collection(ARQUIVO_SISTEMA).add(sistema);
                 showNotification("Sistema cadastrado!", 'success');
-                enviarConfirmacaoPorEmail('Novo Sistema Cadastrado', `Descrição: ${sistema.descricao}`);
             }
 
             resetarFormulario('Sistemas');
@@ -350,8 +333,6 @@
                 nota_fiscal_recebida: getInput('nf-recebida').checked
             });
             showNotification("Documentos atualizados para o sistema '" + nomeSistema + "'.", 'success');
-            const detalhes = `ART Recebida: ${getInput('art-recebida').checked ? 'Sim' : 'Não'}\nNF Recebida: ${getInput('nf-recebida').checked ? 'Sim' : 'Não'}`;
-            enviarConfirmacaoPorEmail(`Documentos do Sistema '${nomeSistema}' Atualizados`, detalhes);
             getInput('doc-nome-sistema').value = '';
             getInput('art-recebida').checked = false;
             getInput('nf-recebida').checked = false;
@@ -395,7 +376,6 @@
                 await Promise.all([...epiDeletes, ...sistemaDeletes]);
 
                 showNotification("Todos os dados foram apagados.", 'warning');
-                enviarConfirmacaoPorEmail('Todos os Dados Resetados', 'Ação de exclusão em massa foi concluída.');
                 atualizarVisualizacao('EPIs');
                 atualizarVisualizacao('Sistemas');
             } catch (error) {
