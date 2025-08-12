@@ -84,9 +84,10 @@
                 <div class="card">
                     <h2>Atualizar Documentos da Obra</h2>
                     <div class="form-group">
-                        <label for="doc-nome-obra">Selecione a Obra para atualizar</label>
-                        <input type="text" id="doc-nome-obra" list="lista-obras" placeholder="Digite ou selecione o nome da obra" onchange="carregarDetalhesDaObra()">
-                        <datalist id="lista-obras"></datalist>
+                        <label for="doc-select-obra">Selecione a Obra para atualizar</label>
+                        <select id="doc-select-obra" onchange="carregarDetalhesDaObra()">
+                            <option value="" disabled selected>Selecione uma obra...</option>
+                        </select>
                     </div>
                     <div class="document-grid">
                         <div class="checkbox-group"> <input type="checkbox" id="art-rrt-recebida"> <label for="art-rrt-recebida">ART / RRT Recebida</label> </div>
@@ -156,7 +157,7 @@
     // Importe as funções que você precisa dos SDKs que você precisa
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 
     // A configuração do Firebase do seu aplicativo da web
@@ -182,7 +183,8 @@
     let itemNotificacaoAtual = null;
     let newFiles = [];
     let existingFiles = [];
-
+    let filesToDelete = [];
+    
     function showNotification(message, type = 'info') {
         const container = document.getElementById('notification-container');
         const notification = document.createElement('div');
@@ -331,10 +333,11 @@
             getInput('obra-form-title').textContent = "Cadastro de Obra";
             getInput('btn-salvar-obra').textContent = "Cadastrar Obra";
         } else if (tipo === 'Documentos') {
-            getInput('doc-nome-obra').value = '';
+            getInput('doc-select-obra').value = "";
             ['art-rrt-recebida', 'alvara-emitido', 'avcb-aprovado', 'habitese-emitido', 'nf-recebida'].forEach(id => getInput(id).checked = false);
             newFiles = [];
             existingFiles = [];
+            filesToDelete = [];
             renderFileList();
         }
     }
@@ -377,9 +380,22 @@
                 if (tipo === 'Obras') {
                     bodyContent += `<p><strong>Data entrega obra:</strong> ${item.data_entrega_obra || 'N/A'}</p>`;
                     bodyContent += `<p><strong>Próxima manutenção:</strong> ${item.data_proxima_manutencao || 'N/A'}</p>`;
+
+                    const statusDocsHtml = `
+                        <div class="documentos-view">
+                            <strong>Status dos Documentos:</strong>
+                            <p>ART / RRT Recebida: <span>${item.doc_art_rrt ? 'Sim' : 'Não'}</span></p>
+                            <p>Alvará de Construção Emitido: <span>${item.doc_alvara ? 'Sim' : 'Não'}</span></p>
+                            <p>AVCB / Bombeiros Aprovado: <span>${item.doc_avcb ? 'Sim' : 'Não'}</span></p>
+                            <p>Habite-se Emitido: <span>${item.doc_habitese ? 'Sim' : 'Não'}</span></p>
+                            <p>Nota Fiscal Recebida: <span>${item.doc_nf ? 'Sim' : 'Não'}</span></p>
+                        </div>
+                    `;
+                    bodyContent += statusDocsHtml;
+
                     if (item.anexos && item.anexos.length > 0) {
                         const linksAnexos = item.anexos.map(anexo => `<li><a href="${anexo.url}" target="_blank">${anexo.name}</a></li>`).join('');
-                        bodyContent += `<div class="anexos-view"><strong>Anexos:</strong><ul>${linksAnexos}</ul></div>`;
+                        bodyContent += `<div class="anexos-view"><strong>Arquivos Anexados:</strong><ul>${linksAnexos}</ul></div>`;
                     }
                 } else {
                      bodyContent += `<p><strong>Data de Entrega:</strong> ${item.data_entrega || 'N/A'}</p>`;
@@ -404,26 +420,114 @@
                 viewElement.appendChild(itemContainer);
             });
         } catch (error) {
+            console.error("Erro ao atualizar visualização:", error);
             viewElement.innerHTML = `<p style="text-align: center; color: var(--cor-erro);">Erro ao carregar dados.</p>`;
         }
     }
 
     async function marcarEnvioDocumentos() {
-        // ... Lógica de upload aqui
+        const obraSelecionadaId = getInput('doc-select-obra').value;
+        if (!obraSelecionadaId) {
+            showNotification("Por favor, selecione uma obra válida.", "warning");
+            return;
+        }
+
+        const btn = getInput('btn-atualizar-docs');
+        btn.disabled = true;
+        btn.textContent = 'Atualizando...';
+
+        try {
+            // Passo 1: Excluir arquivos
+            if (filesToDelete.length > 0) {
+                const deletePromises = filesToDelete.map(file => {
+                    const fileRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
+                    return deleteObject(fileRef).catch(err => console.error("Erro ao deletar:", err)); // Não trava se um arquivo já foi removido
+                });
+                await Promise.all(deletePromises);
+            }
+
+            // Passo 2: Upload de novos arquivos
+            const uploadPromises = newFiles.map(async (file) => {
+                const storageRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
+                await uploadBytes(storageRef, file);
+                return getDownloadURL(storageRef).then(url => ({ name: file.name, url }));
+            });
+            const novosAnexos = await Promise.all(uploadPromises);
+            
+            const todosAnexos = [...existingFiles, ...novosAnexos];
+
+            // Passo 3: Atualizar Firestore
+            const obraRef = doc(db, ARQUIVO_OBRA, obraSelecionadaId);
+            await updateDoc(obraRef, {
+                doc_art_rrt: getInput('art-rrt-recebida').checked,
+                doc_alvara: getInput('alvara-emitido').checked,
+                doc_avcb: getInput('avcb-aprovado').checked,
+                doc_habitese: getInput('habitese-emitido').checked,
+                doc_nf: getInput('nf-recebida').checked,
+                anexos: todosAnexos
+            });
+
+            showNotification("Documentos da obra atualizados com sucesso!", "success");
+            resetarFormulario('Documentos');
+            await popularListaObras();
+
+        } catch (error) {
+            console.error("Erro detalhado ao atualizar documentos:", error);
+            showNotification(`Erro ao atualizar: ${error.message}`, "error");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Atualizar Documentos';
+        }
     }
 
     async function popularListaObras() {
-        const datalist = document.getElementById('lista-obras');
-        datalist.innerHTML = '';
+        const select = getInput('doc-select-obra');
+        const currentValue = select.value;
+        select.innerHTML = '<option value="" disabled selected>Selecione uma obra...</option>';
+        
         const q = query(collection(db, ARQUIVO_OBRA), orderBy("descricao"));
         const snapshot = await getDocs(q);
         snapshot.docs.forEach(doc => {
-            datalist.appendChild(new Option(doc.data().descricao));
+            const option = document.createElement('option');
+            option.value = doc.id;
+            option.textContent = doc.data().descricao;
+            select.appendChild(option);
         });
+        select.value = currentValue;
     }
 
     async function carregarDetalhesDaObra() {
-        // ... Lógica para carregar detalhes aqui
+        const obraSelecionadaId = getInput('doc-select-obra').value;
+
+        existingFiles = [];
+        newFiles = [];
+        filesToDelete = [];
+        renderFileList();
+
+        if (!obraSelecionadaId) {
+            resetarFormulario('Documentos');
+            return;
+        }
+
+        try {
+            const docRef = doc(db, ARQUIVO_OBRA, obraSelecionadaId);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                getInput('art-rrt-recebida').checked = data.doc_art_rrt || false;
+                getInput('alvara-emitido').checked = data.doc_alvara || false;
+                getInput('avcb-aprovado').checked = data.doc_avcb || false;
+                getInput('habitese-emitido').checked = data.doc_habitese || false;
+                getInput('nf-recebida').checked = data.doc_nf || false;
+                
+                existingFiles = data.anexos || [];
+                renderFileList();
+            }
+        } catch (error) {
+            console.error("Erro ao carregar detalhes da obra:", error);
+            showNotification("Erro ao carregar os detalhes da obra.", "error");
+        }
     }
 
     function toggleDarkMode() {
@@ -436,7 +540,9 @@
         getInput(pageId + '-page').classList.add('active');
         document.querySelector(`.sidebar-nav a[onclick*="'${pageId}'"]`).classList.add('active');
         
-        ['EPIs', 'Obras', 'Documentos'].forEach(resetarFormulario);
+        resetarFormulario('EPIs');
+        resetarFormulario('Obras');
+        resetarFormulario('Documentos');
 
         if (pageId === 'documentos') popularListaObras();
         if (pageId === 'notificacoes') carregarNotificacoes();
@@ -496,7 +602,7 @@
         const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
         const docRef = doc(db, collectionName, id);
         const docSnap = await getDoc(docRef);
-        if (!docSnap.exists) return showNotification("Item não encontrado.", "error");
+        if (!docSnap.exists()) return showNotification("Item não encontrado.", "error");
         
         itemNotificacaoAtual = docSnap.data();
         const descricao = itemNotificacaoAtual.descricao;
@@ -571,17 +677,27 @@
         const fileList = getInput('file-list');
         fileList.innerHTML = '';
         
-        const allFiles = [...existingFiles, ...newFiles.map(f => ({ name: f.name, isNew: true }))];
-        const uniqueFiles = Array.from(new Map(allFiles.map(item => [item.name, item])).values());
-
-        uniqueFiles.forEach(file => {
+        existingFiles.forEach(file => {
             const fileItem = document.createElement('div');
             fileItem.className = 'file-item';
             fileItem.innerHTML = `<span>${file.name}</span><button title="Remover">&times;</button>`;
-            
             fileItem.querySelector('button').addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (!filesToDelete.some(f => f.name === file.name)) {
+                    filesToDelete.push(file);
+                }
                 existingFiles = existingFiles.filter(f => f.name !== file.name);
+                renderFileList();
+            });
+            fileList.appendChild(fileItem);
+        });
+
+        newFiles.forEach(file => {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `<span>${file.name} (novo)</span><button title="Remover">&times;</button>`;
+            fileItem.querySelector('button').addEventListener('click', (e) => {
+                e.stopPropagation();
                 newFiles = newFiles.filter(f => f.name !== file.name);
                 renderFileList();
             });
@@ -589,7 +705,7 @@
         });
     }
 
-    // Attach functions to the window object to make them accessible from onclick attributes
+    // Anexa as funções ao objeto window para que fiquem acessíveis a partir dos atributos onclick
     window.salvarEpi = salvarEpi;
     window.toggleView = toggleView;
     window.atualizarVisualizacao = atualizarVisualizacao;

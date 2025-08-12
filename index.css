@@ -93,7 +93,10 @@ body {
     font-weight: 500;
     margin-bottom: 8px;
 }
-.form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"] {
+.form-group input[type="text"], 
+.form-group input[type="number"], 
+.form-group input[type="date"],
+.form-group select {
     background-color: var(--cor-input-fundo);
     border: 1px solid var(--cor-borda);
     border-radius: 8px;
@@ -101,10 +104,32 @@ body {
     font-family: var(--fonte-padrao);
     font-size: 14px;
     padding: 12px;
-    width: calc(100% - 24px);
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
-.form-group input[type="date"] { padding: 10.5px 12px; }
-.form-group input:focus {
+
+/* --- INÍCIO DA ESTILIZAÇÃO DO SELECT --- */
+.form-group select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235c677d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 40px;
+}
+body.dark-theme .form-group select {
+     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+.form-group select:hover {
+    box-shadow: 0 0 8px var(--cor-destaque), 0 0 15px var(--cor-destaque);
+    border-color: var(--cor-destaque);
+}
+/* --- FIM DA ESTILIZAÇÃO DO SELECT --- */
+
+.form-group input:focus,
+.form-group select:focus {
     border-color: var(--cor-destaque);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
     outline: none;
@@ -419,3 +444,25 @@ body.dark-theme .logo-dark { display: block; }
 .anexos-view li { font-size: 13px; color: var(--cor-texto-secundario); margin-bottom: 4px; }
 .anexos-view a { color: var(--cor-destaque); text-decoration: none; }
 .anexos-view a:hover { text-decoration: underline; }
+
+.documentos-view {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cor-borda);
+}
+.documentos-view strong {
+    color: var(--cor-texto-principal);
+    display: block;
+    margin-bottom: 5px;
+}
+.documentos-view p {
+    font-size: 13px;
+    color: var(--cor-texto-secundario);
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+}
+.documentos-view p span {
+    font-weight: 500;
+    color: var(--cor-texto-principal);
+}
