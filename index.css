@@ -108,7 +108,9 @@ body {
     box-sizing: border-box;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
-
+.capitalize-input {
+    text-transform: capitalize;
+}
 .form-group select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -160,22 +162,18 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 }
 .checkbox-group input[type="checkbox"]:hover { border-color: var(--cor-destaque); }
 .checkbox-group input[type="checkbox"]:checked { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
-
-/* --- INÍCIO DA CORREÇÃO DE ALINHAMENTO --- */
 .checkbox-group input[type="checkbox"]::after {
     border: solid white;
     border-width: 0 3px 3px 0;
     content: '';
     display: none;
-    height: 10px; /* Ajustado */
-    left: 8px;   /* Ajustado */
+    height: 10px;
+    left: 8px;
     position: absolute;
-    top: 5px;    /* Ajustado */
+    top: 5px;
     transform: rotate(45deg);
-    width: 5px;  /* Ajustado */
+    width: 5px;
 }
-/* --- FIM DA CORREÇÃO DE ALINHAMENTO --- */
-
 .checkbox-group input[type="checkbox"]:checked::after { display: block; }
 .checkbox-group label { color: var(--cor-texto-principal); cursor: pointer; font-size: 16px; font-weight: 500; }
 button {
@@ -189,6 +187,11 @@ button {
     margin-right: 10px;
     padding: 12px 22px;
     transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
+}
+.btn-group {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid var(--cor-borda);
 }
 button:disabled { background-color: var(--cor-texto-secundario); cursor: not-allowed; box-shadow: none; }
 button:active { transform: scale(0.98); }
@@ -467,4 +470,108 @@ body.dark-theme .logo-dark { display: block; }
 .documentos-view p span {
     font-weight: 500;
     color: var(--cor-texto-principal);
+}
+
+.sistemas-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cor-borda);
+}
+.sistemas-section h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.sistema-item {
+    background-color: var(--cor-input-fundo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+}
+.btn-add-sistema {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--cor-card);
+    border: 2px dashed var(--cor-borda);
+    color: var(--cor-texto-secundario);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 10px 0;
+}
+.btn-add-sistema:hover {
+    border-color: var(--cor-destaque);
+    color: var(--cor-destaque);
+    box-shadow: none;
+}
+.btn-remove-sistema {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: var(--cor-texto-secundario);
+    cursor: pointer;
+    padding: 5px;
+    margin: 0;
+    box-shadow: none;
+}
+.btn-remove-sistema:hover {
+    color: var(--cor-reset);
+    background-color: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+}
+.date-calculation-group {
+    display: flex;
+    gap: 10px;
+}
+.date-calculation-group input {
+    flex: 2;
+}
+.date-calculation-group select {
+    flex: 1;
+}
+.date-result-container {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: var(--cor-fundo);
+    border-radius: 6px;
+    text-align: center;
+}
+.calculated-date {
+    margin: 5px 0 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--cor-destaque);
+}
+.holiday-info {
+    font-size: 12px;
+    color: var(--cor-texto-secundario);
+    margin: 0;
+}
+.holiday-name {
+    color: var(--cor-reset);
+    font-weight: bold;
+}
+.sistemas-view {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cor-borda);
+}
+.sistemas-view strong {
+    color: var(--cor-texto-principal);
+}
+.sistemas-view ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+.sistemas-view li {
+    font-size: 13px;
+    background-color: var(--cor-input-fundo);
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 5px;
 }

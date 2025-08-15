@@ -15,8 +15,8 @@
     <div id="notification-container"></div>
     <div class="overlay"></div>
     
-    <button id="menu-toggle-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <button id="menu-toggle-btn" aria-label="Abrir menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
 
     <div class="app-layout">
@@ -26,34 +26,31 @@
                 <img src="assets/mono-brancaMarca-Belfort-Engenharia (1).png" alt="Logo Belfort Engenharia" class="logo-dark">
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="active" onclick="showPage('epi')">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> EPIs
+                <a href="#" class="active" onclick="showPage('epi')" role="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> EPIs
                 </a>
-                <a href="#" onclick="showPage('obras')">
+                <a href="#" onclick="showPage('obras')" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Obras
                 </a>
-                <a href="#" onclick="showPage('documentos')">
+                <a href="#" onclick="showPage('documentos')" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> Documentos
                 </a>
-                <a href="#" onclick="showPage('notificacoes')">
+                <a href="#" onclick="showPage('notificacoes')" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Notificações
-                </a>
-                <a href="#" onclick="showPage('controles')">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg> Controles
                 </a>
             </nav>
             <div class="theme-toggle-container">
                 <svg class="theme-icon icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <button id="btn-dark-mode-toggle"></button>
+                <button id="btn-dark-mode-toggle" aria-label="Alternar tema"></button>
                 <svg class="theme-icon icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
         </aside>
 
         <main class="content">
-            <div id="epi-page" class="page-content active">
+            <div id="epi-page" class="page-content">
                 <div class="card">
                     <h2 id="epi-form-title">Cadastro de EPI</h2>
-                    <div class="form-group"> <label for="descricao-epi">Descrição do EPI</label> <input type="text" id="descricao-epi"> </div>
+                    <div class="form-group"> <label for="descricao-epi">Descrição do EPI</label> <input type="text" id="descricao-epi" class="capitalize-input"> </div>
                     <div class="form-group"> <label for="data-entrega-epi">Data de entrega</label> <input type="date" id="data-entrega-epi"> </div>
                     <div class="form-group"> <label for="tempo-troca">Tempo de troca (dias)</label> <input type="number" id="tempo-troca" inputmode="numeric"> </div>
                     <div class="form-group"> <label for="data-troca">Data da troca</label> <input type="date" id="data-troca"> </div>
@@ -61,23 +58,32 @@
                     <div id="epis-view-container" class="view-container" style="display:none;">
                         <div class="search-bar form-group">
                             <label for="busca-epi">Buscar EPI</label>
-                            <input type="text" id="busca-epi" onkeyup="atualizarVisualizacao('EPIs')" placeholder="Digite a descrição para filtrar...">
+                            <input type="text" id="busca-epi" onkeyup="atualizarVisualizacao('EPIs')" placeholder="Digite a descrição para filtrar..." class="capitalize-input">
                         </div>
                         <div id="epis-cadastrados-view" class="cadastros-view"></div>
                     </div>
                 </div>
             </div>
-            <div id="obras-page" class="page-content">
+            <div id="obras-page" class="page-content active">
                  <div class="card">
                     <h2 id="obra-form-title">Cadastro de Obra</h2>
-                    <div class="form-group"> <label for="desc-obra">Descrição da Obra</label> <input type="text" id="desc-obra"> </div>
+                    <div class="form-group"> <label for="desc-obra">Descrição da Obra</label> <input type="text" id="desc-obra" class="capitalize-input"> </div>
                     <div class="form-group"> <label for="data-entrega-obra">Data da entrega da obra</label> <input type="date" id="data-entrega-obra"> </div>
-                    <div class="form-group"> <label for="data-manutencao">Próxima manutenção</label> <input type="date" id="data-manutencao"> </div>
+                    
+                    <div class="sistemas-section">
+                        <h3>Sistemas</h3>
+                        <div id="sistemas-list"></div>
+                        <button id="btn-add-sistema" class="btn-add-sistema" onclick="adicionarSistema()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Adicionar Sistema
+                        </button>
+                    </div>
+
                     <div class="btn-group"> <button id="btn-salvar-obra" onclick="salvarObra()">Cadastrar Obra</button> <button class="btn-secondary" onclick="toggleView('Obras')">Ver Cadastradas</button> </div>
                     <div id="obras-view-container" class="view-container" style="display:none;">
                         <div class="search-bar form-group">
                             <label for="busca-obras">Buscar Obra</label>
-                            <input type="text" id="busca-obras" onkeyup="atualizarVisualizacao('Obras')" placeholder="Digite a descrição para filtrar...">
+                            <input type="text" id="busca-obras" onkeyup="atualizarVisualizacao('Obras')" placeholder="Digite a descrição para filtrar..." class="capitalize-input">
                         </div>
                         <div id="obras-cadastradas-view" class="cadastros-view"></div>
                     </div>
@@ -97,11 +103,11 @@
                         <div class="checkbox-group"> <input type="checkbox" id="alvara-emitido"> <label for="alvara-emitido">Alvará de Construção Emitido</label> </div>
                         <div class="checkbox-group"> <input type="checkbox" id="avcb-aprovado"> <label for="avcb-aprovado">AVCB / Bombeiros Aprovado</label> </div>
                         <div class="checkbox-group"> <input type="checkbox" id="habitese-emitido"> <label for="habitese-emitido">Habite-se Emitido</label> </div>
-                        <div class="checkbox-group"> <input type="checkbox" id="nf-recebida"> <label for="nf-recebida">Nota Fiscal Recebida</label> </div>
+                        <div class="checkbox-group"> <input type="checkbox" id="projetos"> <label for="projetos">Projetos</label> </div>
                     </div>
                     <div class="form-group">
                         <label>Anexar Arquivos</label>
-                        <div id="drop-zone">
+                        <div id="drop-zone" role="button" tabindex="0">
                             <input type="file" id="file-input" multiple hidden accept=".png,.jpeg,.jpg,.pdf,.docx">
                             <div class="drop-zone-text">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -130,24 +136,14 @@
                     </div>
                 </div>
             </div>
-            <div id="controles-page" class="page-content">
-                <div class="card">
-                    <h2>Controles Gerais</h2>
-                    <p>Aqui você pode gerenciar os dados do sistema e verificar alertas.</p>
-                    <div class="btn-group">
-                        <button onclick="mostrarAlertas()">Verificar Alertas</button>
-                        <button class="btn-reset" onclick="resetarDados()">Resetar Todos os Dados</button>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
     <div id="notification-modal" class="modal-overlay">
-        <div class="modal">
+        <div class="modal" role="dialog" aria-labelledby="notification-modal-title">
             <div class="modal-header">
-                <h3>Opções de Notificação</h3>
-                <button class="close-button" onclick="fecharModalNotificacao()">&times;</button>
+                <h3 id="notification-modal-title">Opções de Notificação</h3>
+                <button class="close-button" onclick="fecharModalNotificacao()" aria-label="Fechar modal">&times;</button>
             </div>
             <div class="modal-body">
                 <p><strong>Item:</strong> <span id="modal-item-descricao"></span></p>
@@ -172,13 +168,13 @@
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyC1jdjj2mQ9IhSCk3wRilqimNA_zLvaOs8",
-        authDomain: "gerenciador-2ponto0.firebaseapp.com",
-        projectId: "gerenciador-2ponto0",
-        storageBucket: "gerenciador-2ponto0.appspot.com",
-        messagingSenderId: "852746372282",
-        appId: "1:852746372282:web:b8bff69130c39e40782e83",
-        measurementId: "G-DTH247GZDW"
+        apiKey: "AIzaSyCZnHLHQHBsxcIAjJbHYhoItHB6dQX0gcw",
+        authDomain: "gerenciador-2-a1397.firebaseapp.com",
+        projectId: "gerenciador-2-a1397",
+        storageBucket: "gerenciador-2-a1397.firebasestorage.app",
+        messagingSenderId: "543708148687",
+        appId: "1:543708148687:web:0b961e447d652d79ea18ba",
+        measurementId: "G-T4WRSZWTCH"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -215,6 +211,13 @@
     }
 
     function getInput(id) { return document.getElementById(id); }
+
+    function capitalizeInput(event) {
+        const input = event.target;
+        if (input.value.length > 0) {
+            input.value = input.value.charAt(0).toUpperCase() + input.value.slice(1);
+        }
+    }
 
     async function enviarConfirmacaoPorEmail(action, details) {
         try {
@@ -273,12 +276,26 @@
 
     async function salvarObra() {
         try {
+            const sistemas = [];
+            document.querySelectorAll('.sistema-item').forEach(item => {
+                const nome = item.querySelector('.sistema-nome').value.trim();
+                const quantidade = item.querySelector('.sistema-quantidade').value;
+                const dataManutencao = item.querySelector('.calculated-date').dataset.fullDate || '';
+                if (nome && quantidade && dataManutencao) {
+                    sistemas.push({
+                        nome,
+                        quantidade: parseInt(quantidade, 10),
+                        data_manutencao: dataManutencao
+                    });
+                }
+            });
+
             const obraData = {
                 descricao: getInput('desc-obra').value.trim(),
                 data_entrega_obra: formatarDataParaSalvar(getInput('data-entrega-obra').value),
-                data_proxima_manutencao: formatarDataParaSalvar(getInput('data-manutencao').value),
+                sistemas: sistemas
             };
-            if (!obraData.descricao || !obraData.data_entrega_obra || !obraData.data_proxima_manutencao) throw new Error("Preencha todos os campos da Obra.");
+            if (!obraData.descricao || !obraData.data_entrega_obra) throw new Error("Preencha a descrição e a data de entrega da Obra.");
 
             const collectionRef = collection(db, ARQUIVO_OBRA);
             if (modoEdicao.ativo && modoEdicao.tipo === 'Obras') {
@@ -287,7 +304,7 @@
                 showNotification("Obra atualizada!", 'success');
             } else {
                 Object.assign(obraData, {
-                    doc_art_rrt: false, doc_alvara: false, doc_avcb: false, doc_habitese: false, doc_nf: false, anexos: []
+                    doc_art_rrt: false, doc_alvara: false, doc_avcb: false, doc_habitese: false, doc_projetos: false, anexos: []
                 });
                 await addDoc(collectionRef, obraData);
                 showNotification("Obra cadastrada!", 'success');
@@ -324,7 +341,9 @@
         } else {
             getInput('desc-obra').value = item.descricao;
             getInput('data-entrega-obra').value = formatarDataParaInput(item.data_entrega_obra);
-            getInput('data-manutencao').value = formatarDataParaInput(item.data_proxima_manutencao);
+            if (item.sistemas) {
+                item.sistemas.forEach(sistema => adicionarSistema(sistema));
+            }
             getInput('obra-form-title').textContent = "Editando Obra";
             getInput('btn-salvar-obra').textContent = "Salvar Alterações";
         }
@@ -337,12 +356,13 @@
             getInput('epi-form-title').textContent = "Cadastro de EPI";
             getInput('btn-salvar-epi').textContent = "Cadastrar EPI";
         } else if (tipo === 'Obras') {
-            ['desc-obra', 'data-entrega-obra', 'data-manutencao'].forEach(id => getInput(id).value = '');
+            ['desc-obra', 'data-entrega-obra'].forEach(id => getInput(id).value = '');
+            getInput('sistemas-list').innerHTML = '';
             getInput('obra-form-title').textContent = "Cadastro de Obra";
             getInput('btn-salvar-obra').textContent = "Cadastrar Obra";
         } else if (tipo === 'Documentos') {
             getInput('doc-select-obra').value = "";
-            ['art-rrt-recebida', 'alvara-emitido', 'avcb-aprovado', 'habitese-emitido', 'nf-recebida'].forEach(id => getInput(id).checked = false);
+            ['art-rrt-recebida', 'alvara-emitido', 'avcb-aprovado', 'habitese-emitido', 'projetos'].forEach(id => getInput(id).checked = false);
             newFiles = [];
             existingFiles = [];
             filesToDelete = [];
@@ -387,7 +407,13 @@
                 
                 if (tipo === 'Obras') {
                     bodyContent += `<p><strong>Data entrega obra:</strong> ${item.data_entrega_obra || 'N/A'}</p>`;
-                    bodyContent += `<p><strong>Próxima manutenção:</strong> ${item.data_proxima_manutencao || 'N/A'}</p>`;
+                    if(item.sistemas && item.sistemas.length > 0){
+                        bodyContent += `<div class="sistemas-view"><strong>Sistemas:</strong><ul>`;
+                        item.sistemas.forEach(s => {
+                            bodyContent += `<li>${s.nome} (Qtd: ${s.quantidade}) - Manutenção em: ${s.data_manutencao}</li>`;
+                        });
+                        bodyContent += `</ul></div>`;
+                    }
 
                     const statusDocsHtml = `
                         <div class="documentos-view">
@@ -396,7 +422,7 @@
                             <p>Alvará de Construção Emitido: <span>${item.doc_alvara ? 'Sim' : 'Não'}</span></p>
                             <p>AVCB / Bombeiros Aprovado: <span>${item.doc_avcb ? 'Sim' : 'Não'}</span></p>
                             <p>Habite-se Emitido: <span>${item.doc_habitese ? 'Sim' : 'Não'}</span></p>
-                            <p>Nota Fiscal Recebida: <span>${item.doc_nf ? 'Sim' : 'Não'}</span></p>
+                            <p>Projetos: <span>${item.doc_projetos ? 'Sim' : 'Não'}</span></p>
                         </div>
                     `;
                     bodyContent += statusDocsHtml;
@@ -469,7 +495,7 @@
                 doc_alvara: getInput('alvara-emitido').checked,
                 doc_avcb: getInput('avcb-aprovado').checked,
                 doc_habitese: getInput('habitese-emitido').checked,
-                doc_nf: getInput('nf-recebida').checked,
+                doc_projetos: getInput('projetos').checked,
                 anexos: todosAnexos
             });
 
@@ -525,7 +551,7 @@
                 getInput('alvara-emitido').checked = data.doc_alvara || false;
                 getInput('avcb-aprovado').checked = data.doc_avcb || false;
                 getInput('habitese-emitido').checked = data.doc_habitese || false;
-                getInput('nf-recebida').checked = data.doc_nf || false;
+                getInput('projetos').checked = data.doc_projetos || false;
                 
                 existingFiles = data.anexos || [];
                 renderFileList();
@@ -589,11 +615,15 @@
             obraList.innerHTML = '';
             if (obras.length > 0) {
                 obras.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'notification-item';
-                    itemDiv.innerHTML = `<p><strong>${item.descricao}</strong></p><p>Próxima manutenção em: ${item.data_proxima_manutencao}</p>`;
-                    itemDiv.onclick = () => editarItem('Obras', item.id);
-                    obraList.appendChild(itemDiv);
+                    if(item.sistemas && item.sistemas.length > 0){
+                        item.sistemas.forEach(s => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'notification-item';
+                            itemDiv.innerHTML = `<p><strong>${item.descricao} - ${s.nome}</strong></p><p>Próxima manutenção em: ${s.data_manutencao}</p>`;
+                            itemDiv.onclick = () => editarItem('Obras', item.id);
+                            obraList.appendChild(itemDiv);
+                        });
+                    }
                 });
             } else {
                 obraList.innerHTML = '<p>Nenhuma obra cadastrada.</p>';
@@ -603,6 +633,163 @@
             obraList.innerHTML = '<p style="color: var(--cor-erro)">Falha ao carregar obras.</p>';
         }
     }
+    
+    function adicionarSistema(sistema = null) {
+        const container = document.getElementById('sistemas-list');
+        const sistemaItem = document.createElement('div');
+        sistemaItem.className = 'sistema-item';
+        
+        const uniqueId = `sistema_${Date.now()}`;
+        
+        sistemaItem.innerHTML = `
+            <div class="form-group">
+                <label for="nome_${uniqueId}">Nome do Sistema</label>
+                <input type="text" id="nome_${uniqueId}" class="sistema-nome capitalize-input" value="${sistema ? sistema.nome : ''}">
+            </div>
+            <div class="form-group">
+                <label for="qtd_${uniqueId}">Quantidade</label>
+                <input type="number" id="qtd_${uniqueId}" class="sistema-quantidade" value="${sistema ? sistema.quantidade : '1'}" min="1">
+            </div>
+            <div class="form-group">
+                <label>Data da Manutenção</label>
+                <div class="date-calculation-group">
+                    <input type="number" class="date-period-value" placeholder="Ex: 3" min="1">
+                    <select class="date-period-unit">
+                        <option value="days">Dias</option>
+                        <option value="months">Meses</option>
+                        <option value="years">Anos</option>
+                    </select>
+                </div>
+                <div class="date-result-container">
+                    <p class="holiday-info"></p>
+                    <p class="calculated-date" data-full-date="${sistema ? sistema.data_manutencao : ''}">${sistema ? `Próxima manutenção em: ${sistema.data_manutencao}`: 'Defina o período acima'}</p>
+                </div>
+            </div>
+            <button class="btn-remove-sistema" onclick="this.parentElement.remove()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+        `;
+
+        const updateDate = () => calcularDataManutencao(sistemaItem);
+        sistemaItem.querySelector('.date-period-value').addEventListener('input', updateDate);
+        sistemaItem.querySelector('.date-period-unit').addEventListener('change', updateDate);
+        sistemaItem.querySelector('.capitalize-input').addEventListener('input', capitalizeInput);
+
+        container.appendChild(sistemaItem);
+    }
+    
+    const feriados = {
+        'fixos': {
+            '01-01': 'Confraternização Universal',
+            '04-21': 'Tiradentes',
+            '05-01': 'Dia do Trabalho',
+            '07-28': 'Adesão do Maranhão à Independência',
+            '09-07': 'Independência do Brasil',
+            '09-08': 'Aniversário de São Luís',
+            '10-12': 'Nossa Senhora Aparecida',
+            '11-02': 'Finados',
+            '11-15': 'Proclamação da República',
+            '11-20': 'Dia da Consciência Negra',
+            '12-08': 'Nossa Senhora da Conceição',
+            '12-25': 'Natal'
+        },
+        'moveis': (ano) => {
+            const g = ano % 19;
+            const c = Math.floor(ano / 100);
+            const h = (c - Math.floor(c / 4) - Math.floor((8 * c + 13) / 25) + 19 * g + 15) % 30;
+            const i = h - Math.floor(h / 28) * (1 - Math.floor(h / 28) * Math.floor(29 / (h + 1)) * Math.floor((21 - g) / 11));
+            const j = (ano + Math.floor(ano / 4) + i + 2 - c + Math.floor(c / 4)) % 7;
+            const l = i - j;
+            const mes = 3 + Math.floor((l + 40) / 44);
+            const dia = l + 28 - 31 * Math.floor(mes / 4);
+            const pascoa = new Date(ano, mes - 1, dia);
+
+            const sextaSanta = new Date(pascoa);
+            sextaSanta.setDate(pascoa.getDate() - 2);
+
+            const carnaval = new Date(pascoa);
+            carnaval.setDate(pascoa.getDate() - 47);
+            
+            const corpusChristi = new Date(pascoa);
+            corpusChristi.setDate(pascoa.getDate() + 60);
+
+            return {
+                [formatarDataChave(carnaval)]: 'Carnaval',
+                [formatarDataChave(sextaSanta)]: 'Paixão de Cristo',
+                [formatarDataChave(corpusChristi)]: 'Corpus Christi'
+            };
+        }
+    };
+
+    function formatarDataChave(data) {
+        return `${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+    }
+
+    function verificarFeriado(data) {
+        const chave = formatarDataChave(data);
+        const feriadosMoveisDoAno = feriados.moveis(data.getFullYear());
+        return feriados.fixos[chave] || feriadosMoveisDoAno[chave] || null;
+    }
+
+    function calcularDataManutencao(sistemaItem) {
+        const value = parseInt(sistemaItem.querySelector('.date-period-value').value, 10);
+        const unit = sistemaItem.querySelector('.date-period-unit').value;
+        const resultEl = sistemaItem.querySelector('.calculated-date');
+        const holidayEl = sistemaItem.querySelector('.holiday-info');
+        const dataEntregaObra = getInput('data-entrega-obra').value;
+
+        holidayEl.innerHTML = '';
+        if (!value || value <= 0) {
+            resultEl.textContent = 'Defina um período válido';
+            resultEl.dataset.fullDate = '';
+            return;
+        }
+
+        let dataFinal;
+        if (dataEntregaObra) {
+            dataFinal = new Date(dataEntregaObra + 'T00:00:00');
+        } else {
+            dataFinal = new Date();
+            holidayEl.innerHTML = `Calculando a partir de hoje. Defina a data de entrega da obra para um cálculo preciso. <br>`;
+        }
+        
+        if (unit === 'days') dataFinal.setDate(dataFinal.getDate() + value);
+        if (unit === 'months') dataFinal.setMonth(dataFinal.getMonth() + value);
+        if (unit === 'years') dataFinal.setFullYear(dataFinal.getFullYear() + value);
+        
+        let diasPulados = 0;
+        let feriadoNome = verificarFeriado(dataFinal);
+        let diaSemana = dataFinal.getDay();
+
+        while(feriadoNome || diaSemana === 0 || diaSemana === 6){
+            if(diasPulados === 0){ // Mostra o feriado/fds original
+                const motivo = feriadoNome ? feriadoNome : (diaSemana === 0 ? 'Domingo' : 'Sábado');
+                holidayEl.innerHTML += `Data original caiu em: <span class="holiday-name">${motivo}</span>. Ajustando...`;
+            }
+            dataFinal.setDate(dataFinal.getDate() + 1);
+            diasPulados++;
+            feriadoNome = verificarFeriado(dataFinal);
+            diaSemana = dataFinal.getDay();
+        }
+        
+        if (diasPulados > 0) {
+            holidayEl.innerHTML += `<br>Ajustado em ${diasPulados} dia(s).`;
+        }
+
+        const diaSemanaFinal = dataFinal.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const dataFormatada = dataFinal.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
+        const textoFinal = `${diaSemanaFinal.charAt(0).toUpperCase() + diaSemanaFinal.slice(1)}, ${dataFormatada}`;
+        resultEl.textContent = `Próxima manutenção em: ${textoFinal}`;
+        resultEl.dataset.fullDate = textoFinal;
+    }
+
+    function recalcularTodasAsDatas() {
+        document.querySelectorAll('.sistema-item').forEach(item => {
+            calcularDataManutencao(item);
+        });
+    }
+
 
     async function abrirModalNotificacao(tipo, id) {
         const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
@@ -612,7 +799,7 @@
         
         itemNotificacaoAtual = docSnap.data();
         const descricao = itemNotificacaoAtual.descricao;
-        const dataVencimento = tipo === 'EPIs' ? itemNotificacaoAtual.data_troca : itemNotificacaoAtual.data_proxima_manutencao;
+        const dataVencimento = tipo === 'EPIs' ? itemNotificacaoAtual.data_troca : 'Verificar sistemas';
 
         getInput('modal-item-descricao').textContent = descricao;
         getInput('modal-item-data').textContent = dataVencimento;
@@ -711,33 +898,7 @@
         });
     }
 
-    const resetarDados = async () => {
-        if (confirm("TEM CERTEZA? Todos os dados de EPIs e Obras serão apagados permanentemente.")) {
-            try {
-                showNotification("Excluindo dados... Por favor, aguarde.", "info");
-                const epiQuery = query(collection(db, ARQUIVO_EPI));
-                const obraQuery = query(collection(db, ARQUIVO_OBRA));
-                const [epiSnapshot, obraSnapshot] = await Promise.all([getDocs(epiQuery), getDocs(obraQuery)]);
-                
-                const batch = writeBatch(db); 
-                epiSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-                obraSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-                await batch.commit();
-
-                showNotification("Todos os dados foram apagados.", 'warning');
-                if(getInput('epis-view-container').style.display === 'block') atualizarVisualizacao('EPIs');
-                if(getInput('obras-view-container').style.display === 'block') atualizarVisualizacao('Obras');
-            } catch (error) {
-                console.error("Erro ao resetar dados:", error);
-                showNotification("Erro ao apagar os dados.", 'error');
-            }
-        }
-    };
-    
-    const mostrarAlertas = () => {
-        showNotification("Função de alertas ainda não implementada.", "info");
-    }
-
+    window.adicionarSistema = adicionarSistema;
     window.salvarEpi = salvarEpi;
     window.toggleView = toggleView;
     window.atualizarVisualizacao = atualizarVisualizacao;
@@ -749,13 +910,17 @@
     window.abrirModalNotificacao = abrirModalNotificacao;
     window.editarItem = editarItem;
     window.excluirItem = excluirItem;
-    window.resetarDados = resetarDados;
-    window.mostrarAlertas = mostrarAlertas;
 
     window.onload = () => {
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
         getInput('btn-dark-mode-toggle').addEventListener('click', toggleDarkMode);
         
+        getInput('data-entrega-obra').addEventListener('change', recalcularTodasAsDatas);
+
+        document.querySelectorAll('.capitalize-input').forEach(input => {
+            input.addEventListener('input', capitalizeInput);
+        });
+
         const menuButton = getInput('menu-toggle-btn');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
@@ -774,7 +939,7 @@
         });
         
         setupFileUpload();
-        showPage('epi');
+        showPage('obras');
     };
 </script>
 

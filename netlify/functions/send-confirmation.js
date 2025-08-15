@@ -4,11 +4,21 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function handler(event) {
     if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
+        return { 
+            statusCode: 405, 
+            body: JSON.stringify({ message: 'Method Not Allowed' }) 
+        };
     }
 
     try {
         const { action, details } = JSON.parse(event.body);
+
+        if (!action || !details) {
+            return { 
+                statusCode: 400, 
+                body: JSON.stringify({ message: 'Missing action or details in request body' }) 
+            };
+        }
 
         await resend.emails.send({
             from: 'Belfort Gerenciador <onboarding@resend.dev>',
@@ -23,9 +33,15 @@ export async function handler(event) {
             `,
         });
 
-        return { statusCode: 200, body: JSON.stringify({ message: 'Email enviado' }) };
+        return { 
+            statusCode: 200, 
+            body: JSON.stringify({ message: 'Email enviado com sucesso' }) 
+        };
     } catch (error) {
-        console.error(error);
-        return { statusCode: 500, body: error.toString() };
+        console.error('Error sending email:', error);
+        return { 
+            statusCode: 500, 
+            body: JSON.stringify({ message: 'Erro ao enviar o email', error: error.message })
+        };
     }
 }
