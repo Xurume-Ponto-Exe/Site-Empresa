@@ -38,6 +38,9 @@
                 <a href="#" onclick="showPage('notificacoes')">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Notificações
                 </a>
+                <a href="#" onclick="showPage('controles')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg> Controles
+                </a>
             </nav>
             <div class="theme-toggle-container">
                 <svg class="theme-icon icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -127,6 +130,16 @@
                     </div>
                 </div>
             </div>
+            <div id="controles-page" class="page-content">
+                <div class="card">
+                    <h2>Controles Gerais</h2>
+                    <p>Aqui você pode gerenciar os dados do sistema e verificar alertas.</p>
+                    <div class="btn-group">
+                        <button onclick="mostrarAlertas()">Verificar Alertas</button>
+                        <button class="btn-reset" onclick="resetarDados()">Resetar Todos os Dados</button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -154,28 +167,22 @@
     </div>
 
 <script type="module">
-    // Importe as funções que você precisa dos SDKs que você precisa
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query, writeBatch } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 
-    // A configuração do Firebase do seu aplicativo da web
     const firebaseConfig = {
-        apiKey: "AIzaSyDLTv8Qw1IFjDnwTi6WQk-FfQuwkI9qdA8",
-        authDomain: "gerenciador-belfort.firebaseapp.com",
-        projectId: "gerenciador-belfort",
-        storageBucket: "gerenciador-belfort.appspot.com",
-        messagingSenderId: "173943781751",
-        appId: "1:173943781751:web:175ec3ee1505ca5049c972",
-        measurementId: "G-YJZX6TC3BE"
+      apiKey: "AIzaSyAqSq3BqXDr7t4vGRFLm96YJKt5mlvVIwU",
+      authDomain: "belfort-gerenciador.firebaseapp.com",
+      projectId: "belfort-gerenciador",
+      storageBucket: "belfort-gerenciador.appspot.com",
+      messagingSenderId: "570427844767",
+      appId: "1:570427844767:web:ce2b81fd6ebc84e04d5aaa"
     };
 
-    // Inicialize o Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const storage = getStorage(app);
-    const analytics = getAnalytics(app);
 
     const ARQUIVO_EPI = "epis";
     const ARQUIVO_OBRA = "obras";
@@ -440,7 +447,7 @@
             if (filesToDelete.length > 0) {
                 const deletePromises = filesToDelete.map(file => {
                     const fileRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
-                    return deleteObject(fileRef).catch(err => console.warn("Arquivo para deletar não encontrado no storage:", err.message));
+                    return deleteObject(fileRef).catch(err => console.warn("Arquivo para deletar não encontrado:", err.message));
                 });
                 await Promise.all(deletePromises);
             }
@@ -703,7 +710,33 @@
         });
     }
 
-    // Anexa as funções ao objeto window para que fiquem acessíveis a partir dos atributos onclick
+    const resetarDados = async () => {
+        if (confirm("TEM CERTEZA? Todos os dados de EPIs e Obras serão apagados permanentemente.")) {
+            try {
+                showNotification("Excluindo dados... Por favor, aguarde.", "info");
+                const epiQuery = query(collection(db, ARQUIVO_EPI));
+                const obraQuery = query(collection(db, ARQUIVO_OBRA));
+                const [epiSnapshot, obraSnapshot] = await Promise.all([getDocs(epiQuery), getDocs(obraQuery)]);
+                
+                const batch = writeBatch(db); 
+                epiSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                obraSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+                await batch.commit();
+
+                showNotification("Todos os dados foram apagados.", 'warning');
+                if(getInput('epis-view-container').style.display === 'block') atualizarVisualizacao('EPIs');
+                if(getInput('obras-view-container').style.display === 'block') atualizarVisualizacao('Obras');
+            } catch (error) {
+                console.error("Erro ao resetar dados:", error);
+                showNotification("Erro ao apagar os dados.", 'error');
+            }
+        }
+    };
+    
+    const mostrarAlertas = () => {
+        showNotification("Função de alertas ainda não implementada.", "info");
+    }
+
     window.salvarEpi = salvarEpi;
     window.toggleView = toggleView;
     window.atualizarVisualizacao = atualizarVisualizacao;
@@ -715,6 +748,8 @@
     window.abrirModalNotificacao = abrirModalNotificacao;
     window.editarItem = editarItem;
     window.excluirItem = excluirItem;
+    window.resetarDados = resetarDados;
+    window.mostrarAlertas = mostrarAlertas;
 
     window.onload = () => {
         if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark-theme');
