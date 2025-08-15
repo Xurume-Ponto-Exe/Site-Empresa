@@ -109,7 +109,6 @@ body {
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-/* --- INÍCIO DA ESTILIZAÇÃO DO SELECT --- */
 .form-group select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -126,7 +125,6 @@ body.dark-theme .form-group select {
     box-shadow: 0 0 8px var(--cor-destaque), 0 0 15px var(--cor-destaque);
     border-color: var(--cor-destaque);
 }
-/* --- FIM DA ESTILIZAÇÃO DO SELECT --- */
 
 .form-group input:focus,
 .form-group select:focus {
@@ -162,18 +160,22 @@ input[type="date"]::-webkit-datetime-edit-year-field {
 }
 .checkbox-group input[type="checkbox"]:hover { border-color: var(--cor-destaque); }
 .checkbox-group input[type="checkbox"]:checked { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
+
+/* --- INÍCIO DA CORREÇÃO DE ALINHAMENTO --- */
 .checkbox-group input[type="checkbox"]::after {
     border: solid white;
     border-width: 0 3px 3px 0;
     content: '';
     display: none;
-    height: 12px;
-    left: 9px;
+    height: 10px; /* Ajustado */
+    left: 8px;   /* Ajustado */
     position: absolute;
-    top: 5px;  
+    top: 5px;    /* Ajustado */
     transform: rotate(45deg);
-    width: 6px;
+    width: 5px;  /* Ajustado */
 }
+/* --- FIM DA CORREÇÃO DE ALINHAMENTO --- */
+
 .checkbox-group input[type="checkbox"]:checked::after { display: block; }
 .checkbox-group label { color: var(--cor-texto-principal); cursor: pointer; font-size: 16px; font-weight: 500; }
 button {
