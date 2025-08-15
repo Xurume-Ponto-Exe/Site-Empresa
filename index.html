@@ -16,7 +16,7 @@
     <div class="overlay"></div>
     
     <button id="menu-toggle-btn" aria-label="Abrir menu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
 
     <div class="app-layout">
@@ -26,8 +26,9 @@
                 <img src="assets/mono-brancaMarca-Belfort-Engenharia (1).png" alt="Logo Belfort Engenharia" class="logo-dark">
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="active" onclick="showPage('epi')" role="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> EPIs
+                <a href="#" class="active" onclick="showPage('fichas_epi')" role="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    Ficha de EPI
                 </a>
                 <a href="#" onclick="showPage('obras')" role="button">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> Obras
@@ -47,29 +48,27 @@
         </aside>
 
         <main class="content">
-            <div id="epi-page" class="page-content">
+            <div id="fichas_epi-page" class="page-content active">
                 <div class="card">
-                    <h2 id="epi-form-title">Cadastro de EPI</h2>
-                    <div class="form-group"> <label for="descricao-epi">Descrição do EPI</label> <input type="text" id="descricao-epi" class="capitalize-input"> </div>
-                    <div class="form-group"> <label for="data-entrega-epi">Data de entrega</label> <input type="date" id="data-entrega-epi"> </div>
-                    <div class="form-group"> <label for="tempo-troca">Tempo de troca (dias)</label> <input type="number" id="tempo-troca" inputmode="numeric"> </div>
-                    <div class="form-group"> <label for="data-troca">Data da troca</label> <input type="date" id="data-troca"> </div>
-                    <div class="btn-group"> <button id="btn-salvar-epi" onclick="salvarEpi()">Cadastrar EPI</button> <button class="btn-secondary" onclick="toggleView('EPIs')">Ver Cadastrados</button> </div>
-                    <div id="epis-view-container" class="view-container" style="display:none;">
+                    <h2 id="ficha-epi-form-title">Ficha de EPI</h2>
+                    <div class="form-group"> <label for="nome-colaborador">Nome do Colaborador</label> <input type="text" id="nome-colaborador" class="capitalize-input"> </div>
+                    <div id="epi-list-container"></div>
+                    <div class="btn-group"> <button id="btn-salvar-ficha-epi" onclick="salvarFichaEpi()">Cadastrar Ficha</button> <button class="btn-secondary" onclick="toggleView('FichasEPI')">Ver Fichas Cadastradas</button> </div>
+                    <div id="fichas_epi-view-container" class="view-container" style="display:none;">
                         <div class="search-bar form-group">
-                            <label for="busca-epi">Buscar EPI</label>
-                            <input type="text" id="busca-epi" onkeyup="atualizarVisualizacao('EPIs')" placeholder="Digite a descrição para filtrar..." class="capitalize-input">
+                            <label for="busca-ficha-epi">Buscar por Colaborador</label>
+                            <input type="text" id="busca-ficha-epi" onkeyup="atualizarVisualizacao('FichasEPI')" placeholder="Digite o nome para filtrar..." class="capitalize-input">
                         </div>
-                        <div id="epis-cadastrados-view" class="cadastros-view"></div>
+                        <div id="fichas_epi-cadastradas-view" class="cadastros-view"></div>
                     </div>
                 </div>
             </div>
-            <div id="obras-page" class="page-content active">
+
+            <div id="obras-page" class="page-content">
                  <div class="card">
                     <h2 id="obra-form-title">Cadastro de Obra</h2>
                     <div class="form-group"> <label for="desc-obra">Descrição da Obra</label> <input type="text" id="desc-obra" class="capitalize-input"> </div>
                     <div class="form-group"> <label for="data-entrega-obra">Data da entrega da obra</label> <input type="date" id="data-entrega-obra"> </div>
-                    
                     <div class="sistemas-section">
                         <h3>Sistemas</h3>
                         <div id="sistemas-list"></div>
@@ -78,7 +77,6 @@
                             Adicionar Sistema
                         </button>
                     </div>
-
                     <div class="btn-group"> <button id="btn-salvar-obra" onclick="salvarObra()">Cadastrar Obra</button> <button class="btn-secondary" onclick="toggleView('Obras')">Ver Cadastradas</button> </div>
                     <div id="obras-view-container" class="view-container" style="display:none;">
                         <div class="search-bar form-group">
@@ -89,6 +87,7 @@
                     </div>
                 </div>
             </div>
+            
             <div id="documentos-page" class="page-content">
                 <div class="card">
                     <h2>Atualizar Documentos da Obra</h2>
@@ -121,12 +120,13 @@
                     <div class="btn-group"> <button id="btn-atualizar-docs" onclick="marcarEnvioDocumentos()">Atualizar Documentos</button> </div>
                 </div>
             </div>
+            
             <div id="notificacoes-page" class="page-content">
                 <div class="card">
                     <h2 class="notifications-header">Itens Datados</h2>
                     <div class="notifications-columns">
                         <div class="notification-column">
-                            <h3 class="column-title">EPIs</h3>
+                            <h3 class="column-title">Fichas de EPI</h3>
                             <div id="epi-notifications-list" class="item-list"></div>
                         </div>
                         <div class="notification-column">
@@ -181,7 +181,7 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    const ARQUIVO_EPI = "epis";
+    const ARQUIVO_FICHA_EPI = "fichas_epi";
     const ARQUIVO_OBRA = "obras";
     let modoEdicao = { ativo: false, tipo: null, id: null };
     let itemNotificacaoAtual = null;
@@ -211,7 +211,7 @@
     }
 
     function getInput(id) { return document.getElementById(id); }
-
+    
     function capitalizeInput(event) {
         const input = event.target;
         if (input.value.length > 0) {
@@ -235,8 +235,8 @@
     }
 
     async function excluirItem(tipo, id, descricao) {
-        const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
-        const nomeItem = tipo === 'EPIs' ? 'EPI' : 'Obra';
+        const collectionName = tipo === 'FichasEPI' ? ARQUIVO_FICHA_EPI : ARQUIVO_OBRA;
+        const nomeItem = tipo === 'FichasEPI' ? 'Ficha de EPI' : 'Obra';
         
         if (confirm(`Tem certeza que deseja excluir ${nomeItem}: "${descricao}"?`)) {
             try {
@@ -249,26 +249,54 @@
         }
     }
     
-    async function salvarEpi() {
+    async function salvarFichaEpi() {
         try {
-            const epi = {
-                descricao: getInput('descricao-epi').value.trim(),
-                data_entrega: formatarDataParaSalvar(getInput('data-entrega-epi').value),
-                tempo_troca_dias: parseInt(getInput('tempo-troca').value, 10),
-                data_troca: formatarDataParaSalvar(getInput('data-troca').value)
-            };
-            if (!epi.descricao || !epi.data_entrega || isNaN(epi.tempo_troca_dias) || !epi.data_troca) throw new Error("Preencha todos os campos do EPI.");
+            const nomeColaborador = getInput('nome-colaborador').value.trim();
+            if (!nomeColaborador) throw new Error("O nome do colaborador é obrigatório.");
 
-            const collectionRef = collection(db, ARQUIVO_EPI);
-            if (modoEdicao.ativo && modoEdicao.tipo === 'EPIs') {
-                await updateDoc(doc(db, ARQUIVO_EPI, modoEdicao.id), epi);
-                showNotification("EPI atualizado com sucesso!", 'success');
-            } else {
-                await addDoc(collectionRef, epi);
-                showNotification("EPI cadastrado com sucesso!", 'success');
+            const episSelecionados = {};
+            const epiCheckboxes = document.querySelectorAll('#epi-list-container .checkbox-group input[type="checkbox"]:checked');
+            
+            if (epiCheckboxes.length === 0) throw new Error("Selecione ao menos um EPI para o colaborador.");
+
+            for (const checkbox of epiCheckboxes) {
+                const epiId = checkbox.id.replace('check-', '');
+                const epiDataContainer = getInput(`data-${epiId}`);
+                
+                const data_entrega = epiDataContainer.querySelector(`#entrega-${epiId}`).value;
+                const tempo_troca_dias = parseInt(epiDataContainer.querySelector(`#tempo-${epiId}`).value, 10);
+                const data_troca = epiDataContainer.querySelector(`#troca-${epiId}`).value;
+                const justificativa = epiDataContainer.querySelector(`#justificativa-${epiId}`).value.trim();
+
+                if (!data_entrega || isNaN(tempo_troca_dias)) {
+                    throw new Error(`Preencha a data de entrega e o tempo de troca para o EPI: ${checkbox.dataset.nome}`);
+                }
+
+                episSelecionados[checkbox.dataset.nome] = {
+                    data_entrega: formatarDataParaSalvar(data_entrega),
+                    tempo_troca_dias,
+                    data_troca: formatarDataParaSalvar(data_troca),
+                    justificativa
+                };
             }
-            resetarFormulario('EPIs');
-            atualizarVisualizacao('EPIs');
+
+            const ficha = {
+                colaborador: nomeColaborador,
+                epis: episSelecionados,
+                timestamp: new Date() 
+            };
+            
+            const collectionRef = collection(db, ARQUIVO_FICHA_EPI);
+            if (modoEdicao.ativo && modoEdicao.tipo === 'FichasEPI') {
+                await updateDoc(doc(db, ARQUIVO_FICHA_EPI, modoEdicao.id), ficha);
+                showNotification("Ficha de EPI atualizada com sucesso!", 'success');
+            } else {
+                await addDoc(collectionRef, ficha);
+                showNotification("Ficha de EPI cadastrada com sucesso!", 'success');
+            }
+            
+            resetarFormulario('FichasEPI');
+            atualizarVisualizacao('FichasEPI');
         } catch (e) {
             showNotification(`Erro: ${e.message}`, 'error');
         }
@@ -317,8 +345,8 @@
     }
 
     async function editarItem(tipo, id) {
-        const pageId = tipo === 'EPIs' ? 'epi' : 'obras';
-        const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
+        const pageId = tipo === 'FichasEPI' ? 'fichas_epi' : 'obras';
+        const collectionName = tipo === 'FichasEPI' ? ARQUIVO_FICHA_EPI : ARQUIVO_OBRA;
         
         const docRef = doc(db, collectionName, id);
         const docSnap = await getDoc(docRef);
@@ -331,13 +359,27 @@
         showPage(pageId);
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
-        if (tipo === 'EPIs') {
-            getInput('descricao-epi').value = item.descricao;
-            getInput('data-entrega-epi').value = formatarDataParaInput(item.data_entrega);
-            getInput('tempo-troca').value = item.tempo_troca_dias;
-            getInput('data-troca').value = formatarDataParaInput(item.data_troca);
-            getInput('epi-form-title').textContent = "Editando EPI";
-            getInput('btn-salvar-epi').textContent = "Salvar Alterações";
+        if (tipo === 'FichasEPI') {
+            getInput('nome-colaborador').value = item.colaborador;
+            
+            Object.keys(item.epis).forEach(nomeEpi => {
+                const epiData = item.epis[nomeEpi];
+                const epiId = nomeEpi.replace(/\s+/g, '-').toLowerCase();
+                const checkbox = getInput(`check-${epiId}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    toggleEpiData(checkbox);
+                    
+                    const epiDataContainer = getInput(`data-${epiId}`);
+                    epiDataContainer.querySelector(`#entrega-${epiId}`).value = formatarDataParaInput(epiData.data_entrega);
+                    epiDataContainer.querySelector(`#tempo-${epiId}`).value = epiData.tempo_troca_dias;
+                    epiDataContainer.querySelector(`#troca-${epiId}`).value = formatarDataParaInput(epiData.data_troca);
+                    epiDataContainer.querySelector(`#justificativa-${epiId}`).value = epiData.justificativa || "";
+                }
+            });
+
+            getInput('ficha-epi-form-title').textContent = "Editando Ficha de EPI";
+            getInput('btn-salvar-ficha-epi').textContent = "Salvar Alterações";
         } else {
             getInput('desc-obra').value = item.descricao;
             getInput('data-entrega-obra').value = formatarDataParaInput(item.data_entrega_obra);
@@ -351,10 +393,12 @@
     
     function resetarFormulario(tipo) {
         modoEdicao = { ativo: false, tipo: null, id: null };
-        if (tipo === 'EPIs') {
-            ['descricao-epi', 'data-entrega-epi', 'tempo-troca', 'data-troca'].forEach(id => getInput(id).value = '');
-            getInput('epi-form-title').textContent = "Cadastro de EPI";
-            getInput('btn-salvar-epi').textContent = "Cadastrar EPI";
+        if (tipo === 'FichasEPI') {
+            getInput('nome-colaborador').value = '';
+            document.querySelectorAll('#epi-list-container .checkbox-group input').forEach(c => c.checked = false);
+            document.querySelectorAll('.epi-data-container').forEach(d => d.style.display = 'none');
+            getInput('ficha-epi-form-title').textContent = "Ficha de EPI";
+            getInput('btn-salvar-ficha-epi').textContent = "Cadastrar Ficha";
         } else if (tipo === 'Obras') {
             ['desc-obra', 'data-entrega-obra'].forEach(id => getInput(id).value = '');
             getInput('sistemas-list').innerHTML = '';
@@ -371,7 +415,7 @@
     }
 
     function toggleView(tipo) {
-        const containerId = tipo === 'EPIs' ? 'epis-view-container' : 'obras-view-container';
+        const containerId = `${tipo.toLowerCase().replace('fichasepi', 'fichas_epi')}-view-container`;
         const container = getInput(containerId);
         container.style.display = container.style.display === 'block' ? 'none' : 'block';
         if (container.style.display === 'block') {
@@ -380,21 +424,37 @@
     }
 
     async function atualizarVisualizacao(tipo) {
-        const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
-        const viewId = tipo === 'EPIs' ? 'epis-cadastrados-view' : 'obras-cadastradas-view';
-        const buscaId = tipo === 'EPIs' ? 'busca-epi' : 'busca-obras';
+        let collectionName, viewId, buscaId, orderByField;
+        switch(tipo) {
+            case 'FichasEPI': 
+                collectionName = ARQUIVO_FICHA_EPI; 
+                viewId = 'fichas_epi-cadastradas-view'; 
+                buscaId = 'busca-ficha-epi'; 
+                orderByField = 'colaborador';
+                break;
+            case 'Obras': 
+                collectionName = ARQUIVO_OBRA; 
+                viewId = 'obras-cadastradas-view'; 
+                buscaId = 'busca-obras'; 
+                orderByField = 'descricao';
+                break;
+        }
         
         const viewElement = getInput(viewId);
         const termoBusca = getInput(buscaId).value.toLowerCase();
         viewElement.innerHTML = '<p style="text-align: center;">Carregando...</p>';
 
         try {
-            const q = query(collection(db, collectionName), orderBy("descricao"));
+            const q = query(collection(db, collectionName), orderBy(orderByField));
             const snapshot = await getDocs(q);
             const dados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const dadosFiltrados = dados.filter(item => !termoBusca || item.descricao.toLowerCase().includes(termoBusca));
-            viewElement.innerHTML = '';
+            
+            const dadosFiltrados = dados.filter(item => {
+                if (!termoBusca) return true;
+                return (item.colaborador || item.descricao).toLowerCase().includes(termoBusca);
+            });
 
+            viewElement.innerHTML = '';
             if (dadosFiltrados.length === 0) {
                 viewElement.innerHTML = `<p style="text-align: center;">Nenhum item encontrado.</p>`;
                 return;
@@ -403,9 +463,24 @@
             dadosFiltrados.forEach(item => {
                 const itemContainer = document.createElement('div');
                 itemContainer.className = 'item-cadastrado';
-                let bodyContent = '';
-                
-                if (tipo === 'Obras') {
+                let bodyContent = '', headerText = item.colaborador || item.descricao;
+
+                if (tipo === 'FichasEPI') {
+                    bodyContent += '<div class="epi-details-grid">';
+                    for (const nomeEpi in item.epis) {
+                        const epi = item.epis[nomeEpi];
+                        bodyContent += `
+                            <div class="epi-detail-item">
+                                <strong>${nomeEpi}</strong>
+                                <p>Entrega: ${epi.data_entrega}</p>
+                                <p>Dias p/ Troca: ${epi.tempo_troca_dias}</p>
+                                <p>Próxima Troca: ${epi.data_troca}</p>
+                                ${epi.justificativa ? `<p>Justificativa: ${epi.justificativa}</p>` : ''}
+                            </div>
+                        `;
+                    }
+                    bodyContent += '</div>';
+                } else if (tipo === 'Obras') {
                     bodyContent += `<p><strong>Data entrega obra:</strong> ${item.data_entrega_obra || 'N/A'}</p>`;
                     if(item.sistemas && item.sistemas.length > 0){
                         bodyContent += `<div class="sistemas-view"><strong>Sistemas:</strong><ul>`;
@@ -414,7 +489,6 @@
                         });
                         bodyContent += `</ul></div>`;
                     }
-
                     const statusDocsHtml = `
                         <div class="documentos-view">
                             <strong>Status dos Documentos:</strong>
@@ -426,20 +500,15 @@
                         </div>
                     `;
                     bodyContent += statusDocsHtml;
-
                     if (item.anexos && item.anexos.length > 0) {
                         const linksAnexos = item.anexos.map(anexo => `<li><a href="${anexo.url}" target="_blank">${anexo.name}</a></li>`).join('');
                         bodyContent += `<div class="anexos-view"><strong>Arquivos Anexados:</strong><ul>${linksAnexos}</ul></div>`;
                     }
-                } else {
-                     bodyContent += `<p><strong>Data de Entrega:</strong> ${item.data_entrega || 'N/A'}</p>`;
-                     bodyContent += `<p><strong>Tempo de Troca:</strong> ${item.tempo_troca_dias || 'N/A'} dias</p>`;
-                     bodyContent += `<p><strong>Próxima Troca:</strong> ${item.data_troca || 'N/A'}</p>`;
                 }
                 
                 itemContainer.innerHTML = `
                     <div class="item-header">
-                        <h4>${item.descricao}</h4>
+                        <h4>${headerText}</h4>
                         <div class="item-actions">
                              <button class="btn-notify" title="Notificar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg></button>
                             <button class="btn-edit" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
@@ -450,7 +519,7 @@
 
                 itemContainer.querySelector('.btn-notify').addEventListener('click', () => abrirModalNotificacao(tipo, item.id));
                 itemContainer.querySelector('.btn-edit').addEventListener('click', () => editarItem(tipo, item.id));
-                itemContainer.querySelector('.btn-delete').addEventListener('click', () => excluirItem(tipo, item.id, item.descricao));
+                itemContainer.querySelector('.btn-delete').addEventListener('click', () => excluirItem(tipo, item.id, headerText));
                 viewElement.appendChild(itemContainer);
             });
         } catch (error) {
@@ -572,7 +641,7 @@
         getInput(pageId + '-page').classList.add('active');
         document.querySelector(`.sidebar-nav a[onclick*="'${pageId}'"]`).classList.add('active');
         
-        resetarFormulario('EPIs');
+        resetarFormulario('FichasEPI');
         resetarFormulario('Obras');
         resetarFormulario('Documentos');
 
@@ -593,20 +662,23 @@
         obraList.innerHTML = '<p>Carregando...</p>';
 
         try {
-            const epiQuery = query(collection(db, ARQUIVO_EPI), orderBy("descricao"));
-            const epiSnapshot = await getDocs(epiQuery);
-            const epis = epiSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const fichaQuery = query(collection(db, ARQUIVO_FICHA_EPI), orderBy("colaborador"));
+            const fichaSnapshot = await getDocs(fichaQuery);
+            const fichas = fichaSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             epiList.innerHTML = '';
-            if (epis.length > 0) {
-                epis.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'notification-item';
-                    itemDiv.innerHTML = `<p><strong>${item.descricao}</strong></p><p>Próxima troca em: ${item.data_troca}</p>`;
-                    itemDiv.onclick = () => editarItem('EPIs', item.id);
-                    epiList.appendChild(itemDiv);
+            if (fichas.length > 0) {
+                fichas.forEach(item => {
+                    for (const nomeEpi in item.epis) {
+                        const epiData = item.epis[nomeEpi];
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'notification-item';
+                        itemDiv.innerHTML = `<p><strong>${item.colaborador} - ${nomeEpi}</strong></p><p>Próxima troca em: ${epiData.data_troca}</p>`;
+                        itemDiv.onclick = () => editarItem('FichasEPI', item.id);
+                        epiList.appendChild(itemDiv);
+                    }
                 });
             } else {
-                epiList.innerHTML = '<p>Nenhum EPI cadastrado.</p>';
+                epiList.innerHTML = '<p>Nenhuma Ficha de EPI cadastrada.</p>';
             }
 
             const obraQuery = query(collection(db, ARQUIVO_OBRA), orderBy("descricao"));
@@ -629,7 +701,7 @@
                 obraList.innerHTML = '<p>Nenhuma obra cadastrada.</p>';
             }
         } catch (error) {
-            epiList.innerHTML = '<p style="color: var(--cor-erro)">Falha ao carregar EPIs.</p>';
+            epiList.innerHTML = '<p style="color: var(--cor-erro)">Falha ao carregar Fichas de EPI.</p>';
             obraList.innerHTML = '<p style="color: var(--cor-erro)">Falha ao carregar obras.</p>';
         }
     }
@@ -680,42 +752,25 @@
     
     const feriados = {
         'fixos': {
-            '01-01': 'Confraternização Universal',
-            '04-21': 'Tiradentes',
-            '05-01': 'Dia do Trabalho',
-            '07-28': 'Adesão do Maranhão à Independência',
-            '09-07': 'Independência do Brasil',
-            '09-08': 'Aniversário de São Luís',
-            '10-12': 'Nossa Senhora Aparecida',
-            '11-02': 'Finados',
-            '11-15': 'Proclamação da República',
-            '11-20': 'Dia da Consciência Negra',
-            '12-08': 'Nossa Senhora da Conceição',
-            '12-25': 'Natal'
+            '01-01': 'Confraternização Universal', '04-21': 'Tiradentes', '05-01': 'Dia do Trabalho',
+            '07-28': 'Adesão do Maranhão à Independência', '09-07': 'Independência do Brasil',
+            '09-08': 'Aniversário de São Luís', '10-12': 'Nossa Senhora Aparecida', '11-02': 'Finados',
+            '11-15': 'Proclamação da República', '11-20': 'Dia da Consciência Negra',
+            '12-08': 'Nossa Senhora da Conceição', '12-25': 'Natal'
         },
         'moveis': (ano) => {
-            const g = ano % 19;
-            const c = Math.floor(ano / 100);
+            const g = ano % 19; const c = Math.floor(ano / 100);
             const h = (c - Math.floor(c / 4) - Math.floor((8 * c + 13) / 25) + 19 * g + 15) % 30;
             const i = h - Math.floor(h / 28) * (1 - Math.floor(h / 28) * Math.floor(29 / (h + 1)) * Math.floor((21 - g) / 11));
             const j = (ano + Math.floor(ano / 4) + i + 2 - c + Math.floor(c / 4)) % 7;
-            const l = i - j;
-            const mes = 3 + Math.floor((l + 40) / 44);
+            const l = i - j; const mes = 3 + Math.floor((l + 40) / 44);
             const dia = l + 28 - 31 * Math.floor(mes / 4);
             const pascoa = new Date(ano, mes - 1, dia);
-
-            const sextaSanta = new Date(pascoa);
-            sextaSanta.setDate(pascoa.getDate() - 2);
-
-            const carnaval = new Date(pascoa);
-            carnaval.setDate(pascoa.getDate() - 47);
-            
-            const corpusChristi = new Date(pascoa);
-            corpusChristi.setDate(pascoa.getDate() + 60);
-
+            const sextaSanta = new Date(pascoa); sextaSanta.setDate(pascoa.getDate() - 2);
+            const carnaval = new Date(pascoa); carnaval.setDate(pascoa.getDate() - 47);
+            const corpusChristi = new Date(pascoa); corpusChristi.setDate(pascoa.getDate() + 60);
             return {
-                [formatarDataChave(carnaval)]: 'Carnaval',
-                [formatarDataChave(sextaSanta)]: 'Paixão de Cristo',
+                [formatarDataChave(carnaval)]: 'Carnaval', [formatarDataChave(sextaSanta)]: 'Paixão de Cristo',
                 [formatarDataChave(corpusChristi)]: 'Corpus Christi'
             };
         }
@@ -762,7 +817,7 @@
         let diaSemana = dataFinal.getDay();
 
         while(feriadoNome || diaSemana === 0 || diaSemana === 6){
-            if(diasPulados === 0){ // Mostra o feriado/fds original
+            if(diasPulados === 0){
                 const motivo = feriadoNome ? feriadoNome : (diaSemana === 0 ? 'Domingo' : 'Sábado');
                 holidayEl.innerHTML += `Data original caiu em: <span class="holiday-name">${motivo}</span>. Ajustando...`;
             }
@@ -790,16 +845,21 @@
         });
     }
 
-
     async function abrirModalNotificacao(tipo, id) {
-        const collectionName = tipo === 'EPIs' ? ARQUIVO_EPI : ARQUIVO_OBRA;
+        const collectionName = tipo === 'FichasEPI' ? ARQUIVO_FICHA_EPI : ARQUIVO_OBRA;
         const docRef = doc(db, collectionName, id);
         const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) return showNotification("Item não encontrado.", "error");
         
-        itemNotificacaoAtual = docSnap.data();
-        const descricao = itemNotificacaoAtual.descricao;
-        const dataVencimento = tipo === 'EPIs' ? itemNotificacaoAtual.data_troca : 'Verificar sistemas';
+        const item = docSnap.data();
+        const descricao = item.colaborador || item.descricao;
+        let dataVencimento = "N/A";
+
+        if(tipo === 'FichasEPI') {
+            dataVencimento = "Verificar EPIs";
+        } else if (tipo === 'Obras') {
+            dataVencimento = "Verificar Sistemas";
+        }
 
         getInput('modal-item-descricao').textContent = descricao;
         getInput('modal-item-data').textContent = dataVencimento;
@@ -876,9 +936,7 @@
             fileItem.innerHTML = `<span>${file.name}</span><button title="Remover">&times;</button>`;
             fileItem.querySelector('button').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!filesToDelete.some(f => f.name === file.name)) {
-                    filesToDelete.push(file);
-                }
+                if (!filesToDelete.some(f => f.name === file.name)) { filesToDelete.push(file); }
                 existingFiles = existingFiles.filter(f => f.name !== file.name);
                 renderFileList();
             });
@@ -897,9 +955,48 @@
             fileList.appendChild(fileItem);
         });
     }
+    
+    function toggleEpiData(checkbox) {
+        const epiId = checkbox.id.replace('check-', '');
+        const dataContainer = getInput(`data-${epiId}`);
+        dataContainer.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    function criarListaDeEPIs() {
+        const lista = [
+            'Capacete de segurança', 'Óculos de segurança', 'Protetor facial', 'Protetor auricular',
+            'Máscara PFF2', 'Luvas de vaqueta', 'Luvas de borracha', 'Botas de segurança',
+            'Perneiras', 'Cinto de segurança tipo paraquedista', 'Trava-quedas retrátil', 'Uniforme de trabalho'
+        ];
+        const container = getInput('epi-list-container');
+        container.innerHTML = '';
+
+        lista.forEach(nomeEpi => {
+            const epiId = nomeEpi.replace(/\s+/g, '-').toLowerCase();
+            const checkboxGroup = document.createElement('div');
+            checkboxGroup.className = 'checkbox-group epi-selector';
+            checkboxGroup.innerHTML = `<input type="checkbox" id="check-${epiId}" data-nome="${nomeEpi}"><label for="check-${epiId}">${nomeEpi}</label>`;
+            
+            const dataContainer = document.createElement('div');
+            dataContainer.id = `data-${epiId}`;
+            dataContainer.className = 'epi-data-container';
+            dataContainer.style.display = 'none';
+            dataContainer.innerHTML = `
+                <div class="form-group"> <label for="entrega-${epiId}">Data de entrega</label> <input type="date" id="entrega-${epiId}"> </div>
+                <div class="form-group"> <label for="tempo-${epiId}">Tempo de troca (dias)</label> <input type="number" id="tempo-${epiId}" inputmode="numeric"> </div>
+                <div class="form-group"> <label for="troca-${epiId}">Data da troca</label> <input type="date" id="troca-${epiId}"> </div>
+                <div class="form-group"> <label for="justificativa-${epiId}">Justificativa</label> <textarea id="justificativa-${epiId}" rows="2"></textarea> </div>
+            `;
+            
+            container.appendChild(checkboxGroup);
+            container.appendChild(dataContainer);
+
+            checkboxGroup.querySelector('input').addEventListener('change', (e) => toggleEpiData(e.target));
+        });
+    }
 
     window.adicionarSistema = adicionarSistema;
-    window.salvarEpi = salvarEpi;
+    window.salvarFichaEpi = salvarFichaEpi;
     window.toggleView = toggleView;
     window.atualizarVisualizacao = atualizarVisualizacao;
     window.salvarObra = salvarObra;
@@ -916,10 +1013,7 @@
         getInput('btn-dark-mode-toggle').addEventListener('click', toggleDarkMode);
         
         getInput('data-entrega-obra').addEventListener('change', recalcularTodasAsDatas);
-
-        document.querySelectorAll('.capitalize-input').forEach(input => {
-            input.addEventListener('input', capitalizeInput);
-        });
+        document.querySelectorAll('.capitalize-input').forEach(input => input.addEventListener('input', capitalizeInput));
 
         const menuButton = getInput('menu-toggle-btn');
         const sidebar = document.querySelector('.sidebar');
@@ -938,8 +1032,9 @@
             if (event.target === event.currentTarget) fecharModalNotificacao();
         });
         
+        criarListaDeEPIs();
         setupFileUpload();
-        showPage('obras');
+        showPage('fichas_epi');
     };
 </script>
 
