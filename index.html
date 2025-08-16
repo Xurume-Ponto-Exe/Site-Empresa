@@ -27,7 +27,7 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="#" class="active" onclick="showPage('fichas_epi')" role="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
                     Ficha de EPI
                 </a>
                 <a href="#" onclick="showPage('obras')" role="button">
@@ -41,9 +41,9 @@
                 </a>
             </nav>
             <div class="theme-toggle-container">
-                <svg class="theme-icon icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <svg class="theme-icon icon-sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
                 <button id="btn-dark-mode-toggle" aria-label="Alternar tema"></button>
-                <svg class="theme-icon icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <svg class="theme-icon icon-moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
             </div>
         </aside>
 
@@ -53,6 +53,11 @@
                     <h2 id="ficha-epi-form-title">Ficha de EPI</h2>
                     <div class="form-group"> <label for="nome-colaborador">Nome do Colaborador</label> <input type="text" id="nome-colaborador" class="capitalize-input"> </div>
                     <div id="epi-list-container"></div>
+                    <div id="novos-epis-container"></div>
+                    <button id="btn-add-epi" class="btn-add-sistema" onclick="adicionarEpi()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Adicionar Novo EPI
+                    </button>
                     <div class="btn-group"> <button id="btn-salvar-ficha-epi" onclick="salvarFichaEpi()">Cadastrar Ficha</button> <button class="btn-secondary" onclick="toggleView('FichasEPI')">Ver Fichas Cadastradas</button> </div>
                     <div id="fichas_epi-view-container" class="view-container" style="display:none;">
                         <div class="search-bar form-group">
@@ -257,8 +262,6 @@
             const episSelecionados = {};
             const epiCheckboxes = document.querySelectorAll('#epi-list-container .checkbox-group input[type="checkbox"]:checked');
             
-            if (epiCheckboxes.length === 0) throw new Error("Selecione ao menos um EPI para o colaborador.");
-
             for (const checkbox of epiCheckboxes) {
                 const epiId = checkbox.id.replace('check-', '');
                 const epiDataContainer = getInput(`data-${epiId}`);
@@ -278,6 +281,27 @@
                     data_troca: formatarDataParaSalvar(data_troca),
                     justificativa
                 };
+            }
+
+            document.querySelectorAll('.epi-item').forEach((item, index) => {
+                const nomeEpi = item.querySelector('.epi-nome').value.trim();
+                const data_entrega = item.querySelector('.epi-entrega').value;
+                const tempo_troca_dias = parseInt(item.querySelector('.epi-tempo').value, 10);
+                const data_troca = item.querySelector('.epi-troca').value;
+                const justificativa = item.querySelector('.epi-justificativa').value.trim();
+
+                if (nomeEpi && data_entrega && !isNaN(tempo_troca_dias)) {
+                    episSelecionados[nomeEpi] = {
+                        data_entrega: formatarDataParaSalvar(data_entrega),
+                        tempo_troca_dias,
+                        data_troca: formatarDataParaSalvar(data_troca),
+                        justificativa
+                    };
+                }
+            });
+
+            if (Object.keys(episSelecionados).length === 0) {
+                throw new Error("Selecione ou adicione ao menos um EPI para o colaborador.");
             }
 
             const ficha = {
@@ -362,10 +386,17 @@
         if (tipo === 'FichasEPI') {
             getInput('nome-colaborador').value = item.colaborador;
             
+            const listaFixa = [
+                'Capacete de segurança', 'Óculos de segurança', 'Protetor facial', 'Protetor auricular',
+                'Máscara PFF2', 'Luvas de vaqueta', 'Luvas de borracha', 'Botas de segurança',
+                'Perneiras', 'Cinto de segurança tipo paraquedista', 'Trava-quedas retrátil', 'Uniforme de trabalho'
+            ];
+
             Object.keys(item.epis).forEach(nomeEpi => {
                 const epiData = item.epis[nomeEpi];
                 const epiId = nomeEpi.replace(/\s+/g, '-').toLowerCase();
                 const checkbox = getInput(`check-${epiId}`);
+
                 if (checkbox) {
                     checkbox.checked = true;
                     toggleEpiData(checkbox);
@@ -375,6 +406,14 @@
                     epiDataContainer.querySelector(`#tempo-${epiId}`).value = epiData.tempo_troca_dias;
                     epiDataContainer.querySelector(`#troca-${epiId}`).value = formatarDataParaInput(epiData.data_troca);
                     epiDataContainer.querySelector(`#justificativa-${epiId}`).value = epiData.justificativa || "";
+                } else {
+                    adicionarEpi({
+                        nome: nomeEpi,
+                        data_entrega: epiData.data_entrega,
+                        tempo_troca_dias: epiData.tempo_troca_dias,
+                        data_troca: epiData.data_troca,
+                        justificativa: epiData.justificativa
+                    });
                 }
             });
 
@@ -397,6 +436,7 @@
             getInput('nome-colaborador').value = '';
             document.querySelectorAll('#epi-list-container .checkbox-group input').forEach(c => c.checked = false);
             document.querySelectorAll('.epi-data-container').forEach(d => d.style.display = 'none');
+            getInput('novos-epis-container').innerHTML = '';
             getInput('ficha-epi-form-title').textContent = "Ficha de EPI";
             getInput('btn-salvar-ficha-epi').textContent = "Cadastrar Ficha";
         } else if (tipo === 'Obras') {
@@ -705,6 +745,58 @@
             obraList.innerHTML = '<p style="color: var(--cor-erro)">Falha ao carregar obras.</p>';
         }
     }
+
+    function adicionarEpi(epi = null) {
+        const container = document.getElementById('novos-epis-container');
+        const epiItem = document.createElement('div');
+        epiItem.className = 'epi-item';
+        
+        const uniqueId = `epi_${Date.now()}`;
+        
+        epiItem.innerHTML = `
+            <div class="epi-item-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <h4 class="epi-item-title">${epi && epi.nome ? epi.nome : 'Novo EPI'}</h4>
+                <div class="epi-item-actions">
+                    <button type="button" class="btn-toggle-epi">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <button type="button" class="btn-remove-sistema" onclick="event.stopPropagation(); this.closest('.epi-item').remove()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="epi-item-body">
+                <div class="form-group">
+                    <label for="nome_${uniqueId}">Nome do EPI</label>
+                    <input type="text" id="nome_${uniqueId}" class="epi-nome capitalize-input" value="${epi ? epi.nome : ''}">
+                </div>
+                <div class="form-group">
+                    <label for="entrega_${uniqueId}">Data de entrega</label>
+                    <input type="date" id="entrega_${uniqueId}" class="epi-entrega" value="${epi ? formatarDataParaInput(epi.data_entrega) : ''}">
+                </div>
+                <div class="form-group">
+                    <label for="tempo_${uniqueId}">Tempo de troca (dias)</label>
+                    <input type="number" id="tempo_${uniqueId}" class="epi-tempo" value="${epi ? epi.tempo_troca_dias : ''}">
+                </div>
+                <div class="form-group">
+                    <label for="troca_${uniqueId}">Data da troca</label>
+                    <input type="date" id="troca_${uniqueId}" class="epi-troca" value="${epi ? formatarDataParaInput(epi.data_troca) : ''}">
+                </div>
+                <div class="form-group">
+                    <label for="justificativa_${uniqueId}">Justificativa</label>
+                    <textarea id="justificativa_${uniqueId}" class="epi-justificativa" rows="2">${epi && epi.justificativa ? epi.justificativa : ''}</textarea>
+                </div>
+            </div>
+        `;
+        
+        const nomeInput = epiItem.querySelector('.epi-nome');
+        const titleElement = epiItem.querySelector('.epi-item-title');
+        nomeInput.addEventListener('input', () => {
+            titleElement.textContent = nomeInput.value.trim() || 'Novo EPI';
+        });
+
+        container.appendChild(epiItem);
+    }
     
     function adicionarSistema(sistema = null) {
         const container = document.getElementById('sistemas-list');
@@ -996,6 +1088,7 @@
     }
 
     window.adicionarSistema = adicionarSistema;
+    window.adicionarEpi = adicionarEpi;
     window.salvarFichaEpi = salvarFichaEpi;
     window.toggleView = toggleView;
     window.atualizarVisualizacao = atualizarVisualizacao;

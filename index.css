@@ -245,7 +245,15 @@ button:hover, .btn-group button:first-child:hover { box-shadow: 0 0 8px var(--co
     width: 19px;
 }
 body.dark-theme #btn-dark-mode-toggle::before { background-color: var(--cor-destaque); transform: translateX(25px); }
-.theme-icon { height: 20px; stroke-width: 2; transition: color 0.3s ease-in-out; width: 20px; margin: 0 8px; }
+.theme-icon {
+    height: 20px;
+    width: 20px;
+    margin: 0 8px;
+    stroke-width: 2;
+    transition: color 0.3s ease-in-out;
+    fill: none;
+    stroke: currentColor;
+}
 .icon-sun { color: var(--cor-destaque); }
 .icon-moon { color: var(--cor-texto-secundario); }
 body.dark-theme .icon-sun { color: var(--cor-texto-secundario); }
@@ -497,6 +505,13 @@ body.dark-theme .logo-dark { display: block; }
     margin-bottom: 15px;
     position: relative;
 }
+.epi-item {
+    background-color: var(--cor-input-fundo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 5px 15px 15px 15px;
+    margin-bottom: 15px;
+}
 .btn-add-sistema {
     width: 100%;
     padding: 10px;
@@ -514,7 +529,7 @@ body.dark-theme .logo-dark { display: block; }
     color: var(--cor-destaque);
     box-shadow: none;
 }
-.btn-remove-sistema {
+.sistema-item .btn-remove-sistema {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -526,7 +541,7 @@ body.dark-theme .logo-dark { display: block; }
     margin: 0;
     box-shadow: none;
 }
-.btn-remove-sistema:hover {
+.sistema-item .btn-remove-sistema:hover {
     color: var(--cor-reset);
     background-color: rgba(239, 68, 68, 0.1);
     border-radius: 50%;
@@ -616,4 +631,56 @@ body.dark-theme .logo-dark { display: block; }
 .epi-detail-item p {
     margin: 4px 0;
     font-size: 12px;
+}
+.epi-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+.epi-item.collapsed .epi-item-header {
+    margin-bottom: 0;
+}
+.epi-item-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+.epi-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.epi-item-actions button {
+    background: none;
+    border: none;
+    padding: 5px;
+    margin: 0;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: none;
+    color: var(--cor-texto-secundario);
+}
+.epi-item-actions .btn-remove-sistema:hover {
+    color: var(--cor-reset);
+    background-color: rgba(239, 68, 68, 0.1);
+    border-radius: 50%;
+}
+.btn-toggle-epi svg {
+    transition: transform 0.3s ease;
+}
+.epi-item.collapsed .btn-toggle-epi svg {
+    transform: rotate(-180deg);
+}
+.epi-item-body {
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out;
+}
+.epi-item.collapsed .epi-item-body {
+    max-height: 0;
+    margin-top: 0;
 }
