@@ -170,7 +170,8 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc, orderBy, query, writeBatch } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+    
+    // REMOVIDO: import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCZnHLHQHBsxcIAjJbHYhoItHB6dQX0gcw",
@@ -184,7 +185,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app);
+    // REMOVIDO: const storage = getStorage(app);
 
     const ARQUIVO_FICHA_EPI = "fichas_epi";
     const ARQUIVO_OBRA = "obras";
@@ -568,6 +569,9 @@
         }
     }
 
+    // ==================================================================
+    // NOVA FUNÇÃO DE UPLOAD COM CLOUDINARY
+    // ==================================================================
     async function marcarEnvioDocumentos() {
         const obraSelecionadaId = getInput('doc-select-obra').value;
         if (!obraSelecionadaId) {
@@ -580,24 +584,36 @@
         btn.textContent = 'Atualizando...';
 
         try {
-            if (filesToDelete.length > 0) {
-                const deletePromises = filesToDelete.map(file => {
-                    const fileRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
-                    return deleteObject(fileRef).catch(err => console.warn("Arquivo para deletar não encontrado:", err.message));
-                });
-                await Promise.all(deletePromises);
-            }
+            // Configurações do Cloudinary
+            const CLOUD_NAME = 'db5smxiqm'; // <-- SUBSTITUA AQUI
+            const UPLOAD_PRESET = 'gerenciador_uploads'; // <-- SUBSTITUA AQUI
+            const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
 
+            // Faz o upload dos novos arquivos para o Cloudinary
             const uploadPromises = newFiles.map(async (file) => {
-                const storageRef = ref(storage, `obras/${obraSelecionadaId}/${file.name}`);
-                await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(storageRef);
-                return { name: file.name, url };
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('upload_preset', UPLOAD_PRESET);
+
+                const response = await fetch(UPLOAD_URL, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Falha no upload do arquivo: ${file.name}`);
+                }
+
+                const data = await response.json();
+                return { name: file.name, url: data.secure_url }; // Salva a URL segura retornada pelo Cloudinary
             });
+
             const novosAnexos = await Promise.all(uploadPromises);
             
+            // Combina os arquivos existentes com os novos que foram enviados
             const todosAnexos = [...existingFiles, ...novosAnexos];
 
+            // Atualiza o documento da obra no Firestore com as novas informações
             const obraRef = doc(db, ARQUIVO_OBRA, obraSelecionadaId);
             await updateDoc(obraRef, {
                 doc_art_rrt: getInput('art-rrt-recebida').checked,
@@ -605,7 +621,7 @@
                 doc_avcb: getInput('avcb-aprovado').checked,
                 doc_habitese: getInput('habitese-emitido').checked,
                 doc_projetos: getInput('projetos').checked,
-                anexos: todosAnexos
+                anexos: todosAnexos // A lista `anexos` agora contém os arquivos existentes e os novos
             });
 
             showNotification("Documentos da obra atualizados com sucesso!", "success");
@@ -642,7 +658,7 @@
 
         existingFiles = [];
         newFiles = [];
-        filesToDelete = [];
+        filesToDelete = []; // Esta variável não é mais usada para deletar do storage, mas mantida para a lógica de remoção da lista
         renderFileList();
 
         if (!obraSelecionadaId) {
